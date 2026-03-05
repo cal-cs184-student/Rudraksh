@@ -1,116 +1,821 @@
+<!DOCTYPE html>
 <html>
-	<head>
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-		<style>
-			h1 {
-				text-align: center;
-			}
+<head>
+  <script>
+    (function(){var s=localStorage.getItem('theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='dark'||((!s)&&d))document.documentElement.classList.add('dark');})();
+  </script>
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[', '\\]'], ['$$', '$$']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HW2 &mdash; CS184/284A Spring 2026</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-			.container {
-				margin: 0 auto;
-				padding: 60px 20%;
-			}
+    :root {
+      --bg: #f9f9f8;
+      --surface: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #6b6b6b;
+      --text-faint: #9b9b9b;
+      --accent: #2563eb;
+      --accent-light: rgba(37,99,235,0.07);
+      --border: #e5e5e3;
+      --border-strong: #d0d0ce;
+      --code-bg: #f3f3f1;
+      --code-color: #c62a2a;
+      --radius: 8px;
+      --radius-lg: 12px;
+      --btn-bg: #ebebea;
+      --btn-hover: #dededc;
+      --row-alt: #fafaf9;
+    }
 
-			figure {
-				text-align: center;
-			}
+    html.dark {
+      --bg: #1e1e1e;
+      --surface: #2d2d2d;
+      --text: #ececec;
+      --text-muted: #999999;
+      --text-faint: #666666;
+      --accent: #5b9cf6;
+      --accent-light: rgba(91,156,246,0.1);
+      --border: #3d3d3d;
+      --border-strong: #4d4d4d;
+      --code-bg: #252525;
+      --code-color: #f28b82;
+      --btn-bg: #3a3a3a;
+      --btn-hover: #444444;
+      --row-alt: #333333;
+    }
 
-			img {
-				display: inline-block;
-			}
+    /* ── Theme toggle ── */
+    #theme-toggle {
+      position: fixed;
+      top: 18px;
+      right: 20px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      background: var(--btn-bg);
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: background 0.15s, color 0.15s;
+    }
+    #theme-toggle:hover { background: var(--btn-hover); color: var(--text); }
+    #theme-toggle svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .icon-sun  { display: none; }
+    .icon-moon { display: block; }
+    html.dark .icon-sun  { display: block; }
+    html.dark .icon-moon { display: none; }
 
-			body {
-				font-family: 'Inter', sans-serif;
-			}
-		</style>
-	</head>
-	<body>
-		<div class="container">
-		<h1>CS184/284A Spring 2025 Homework 2 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+    html { scroll-behavior: smooth; }
 
-		<br>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
 
-		Link to webpage: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+    /* ── Layout ── */
+    .page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 80px 40px 120px;
+    }
 
-		<br>
-		
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+    /* ── Header ── */
+    .site-header {
+      margin-bottom: 72px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .site-header .label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .site-header h1 {
+      font-size: 30px;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+    .author {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .header-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .header-link-label { font-size: 13px; color: var(--text-muted); }
+    .header-links a { color: var(--accent); text-decoration: none; }
+    .header-links a:hover { text-decoration: underline; }
 
-		<figure>
-			<img src="teapot.png" alt="Teapot" style="width:50%"/>
-			<figcaption>You can add images with captions!</figcaption>
-		</figure>
+    /* ── TOC ── */
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      margin-bottom: 64px;
+    }
+    .toc-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .toc ol {
+      list-style: none;
+      counter-reset: toc;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-left: 0;
+    }
+    .toc li { counter-increment: toc; margin-bottom: 0; }
+    .toc a {
+      font-size: 14px;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+    }
+    .toc a::before {
+      content: counter(toc, decimal-leading-zero);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-faint);
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .toc a:hover { color: var(--accent); }
 
-		<!--
-		We've already added one heading per part, to make your write-up as navigable when grading. Please fit your write-up within these sections!
-		-->
+    /* ── Section labels ── */
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-light);
+      padding: 4px 10px;
+      border-radius: 100px;
+      margin-bottom: 12px;
+    }
 
-		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
+    /* ── Section dividers ── */
+    .divider { height: 1px; background: var(--border); margin: 64px 0; }
 
-		<h2>Section I: Bezier Curves and Surfaces</h2>
+    /* ── Typography ── */
+    h2 {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: var(--text);
+      scroll-margin-top: 32px;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 28px;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    ul, ol { padding-left: 20px; margin-bottom: 14px; }
+    li { margin-bottom: 6px; }
+    li:last-child { margin-bottom: 0; }
 
-		<h3>Part 1: Bezier curves with 1D de Casteljau subdivision</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    /* ── Code ── */
+    code {
+      font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+      font-size: 12.5px;
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--code-color);
+    }
+    pre {
+      font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+      font-size: 12.5px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      overflow-x: auto;
+      line-height: 1.65;
+      margin: 18px 0;
+      color: var(--text);
+    }
+    pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    kbd {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      padding: 1px 6px;
+      color: var(--text);
+    }
 
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
-		<div style="display: flex; flex-direction: column; align-items: center;">
-			<table style="width: 100%; text-align: center; border-collapse: collapse;">
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			</table>
-		</div>
+    /* ── Figures & images ── */
+    figure { margin: 28px 0; text-align: center; }
+    figure img {
+      max-width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: inline-block;
+    }
+    figcaption {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
 
-		<h3>Part 2: Bezier surfaces with separable 1D de Casteljau</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    /* ── Image grid (replaces old table-based .img-grid) ── */
+    .img-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 28px 0;
+    }
+    .img-grid .cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+    }
+    .img-grid .cell img {
+      width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: block;
+    }
+    .img-grid .cell figcaption {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
 
-		<h2>Section II: Triangle Meshes and Half-Edge Data Structure</h2>
+    /* ── Links ── */
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
 
-		<h3>Part 3: Area-weighted vertex normals</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    @media (max-width: 600px) {
+      .page { padding: 48px 20px 80px; }
+      .img-grid { grid-template-columns: 1fr; }
+      h2 { font-size: 19px; }
+      .site-header h1 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
 
-		<h3>Part 4: Edge flip</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+<button id="theme-toggle" aria-label="Toggle dark mode">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"/>
+    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+</button>
 
-		<h3>Part 5: Edge split</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+<div class="page">
 
-		<h3>Part 6: Loop subdivision for mesh upsampling</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  <!-- ── Header ── -->
+  <header class="site-header">
+    <p class="label">Rudraksh Awasthi &middot; CS184/284A &middot; Spring 2026</p>
+    <h1>Homework 2: MeshEdit Write-Up</h1>
+    <div class="header-links">
+      <span class="header-link-label">Writeup webpage: <a href="https://cal-cs184-student.github.io/Rudraksh/">https://cal-cs184-student.github.io/Rudraksh/</a></span>
+      <span class="header-link-label">GitHub: <a href="https://github.com/cal-cs184-student/hw2-meshedit-tghmkkhscckh">https://github.com/cal-cs184-student/hw2-meshedit-tghmkkhscckh</a></span>
+    </div>
+  </header>
 
-		<h2>(Optional) Section III: Potential Extra Credit - Art Competition: Model something Creative</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  <!-- SCREENSHOT: The teapot (dae/teapot.dae or bez/teapot.bez) rendered with Phong shading — a nice hero image for the top of the report.
+       Suggested filename: ./images/teapot_hero.png
+       Replace this comment with: <img src="./images/teapot_hero.png" alt="Teapot" style="width:60%"/> -->
 
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
-		</div>
-	</body>
+  <!-- ── TOC ── -->
+  <nav class="toc">
+    <p class="toc-title">Contents</p>
+    <ol>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#part1">Bezier Curves with de Casteljau Subdivision</a></li>
+      <li><a href="#part2">Bezier Surfaces with Separable de Casteljau</a></li>
+      <li><a href="#part3">Area-Weighted Vertex Normals</a></li>
+      <li><a href="#part4">Edge Flip</a></li>
+      <li><a href="#part5">Edge Split</a></li>
+      <li><a href="#part6">Loop Subdivision for Mesh Upsampling</a></li>
+    </ol>
+  </nav>
+
+  <!-- ============================================================ -->
+  <div class="section-tag" id="overview">Overview</div>
+  <h2>Overview</h2>
+  <!-- ============================================================ -->
+
+
+
+  <p>
+    Overall, this assignment was very fun to work with and gave me a lot of technical insight into the
+    inner workings of the mesh editing software. Just like the previous assignment and all the topics in
+    the class, it was very easy to sea real world application of the concepts in this assignment as well.
+    Having played a lot of games and worked on blender modelling, it is almost trivial to spot where and how we use
+    these concepts. This is something I find particularly difficult and ambiguous in most other courses, but 
+    now in this one. 
+  </p>
+
+  <p>
+    The most interesting challenge was Parts 4&ndash;6, where pointer bookkeeping was the most important.
+    I learned that the safest strategy for edge flip and split is to enumerate every single mesh element
+    involved, draw the before and after states on paper, and then reassign every pointer even
+    when the value does not change. Partial updates lead to subtle topology corruption that is very hard to
+    debug afterwards. The Loop subdivision work also taught me how properly pre-processing a mesh with
+    edge splits can preserve symmetry through repeated subdivision rounds, and how boundary-aware
+    subdivision rules keep open-boundary meshes from collapsing or spiking at the boundary.
+  </p>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Section I</div>
+  <h2>Bezier Curves and Surfaces</h2>
+  <!-- ============================================================ -->
+
+  <h3 id="part1">Part 1: Bezier Curves with 1D de Casteljau Subdivision</h3>
+
+  <p>
+    Simple and straightforward implementation: At each step, \(n\) points are reduced to \(n-1\)
+    intermediate points using the formula:
+  </p>
+
+  \[ \mathbf{p}_i' = (1-t)\,\mathbf{p}_i + t\,\mathbf{p}_{i+1} \]
+
+  <p>
+    After enough recursive steps the single remaining point is the point on the curve at parameter \(t\).
+  </p>
+
+  <p>
+    My implementation of <code>BezierCurve::evaluateStep</code> takes the current vector of 2D control
+    points and returns the next level of intermediate points. It iterates over adjacent pairs of the input
+    and lerps each pair at the member variable <code>t</code>.
+  </p>
+
+
+
+  <p>
+    Each press of <kbd>E</kbd> in the viewer calls this function once, stepping through the levels.
+    Below I show a custom Bezier curve I created with 6 control points, along with every intermediate
+    level of the de Casteljau evaluation at a fixed \(t\).
+  </p>
+
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW2_Screenshots/P1L1.png" alt="Level 0" style="border:none;"/>
+      <figcaption>Level 0 &mdash; original 6 control points.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P1L2.png" alt="Level 0" style="border:none;"/>
+      <figcaption>Level 1 &mdash; 5 intermediate points.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P1L3.png" alt="Level 0" style="border:none;"/>
+      <figcaption>Level 2 &mdash; 4 intermediate points.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P1L4.png" alt="Level 0" style="border:none;"/>
+      <figcaption>Level 3 &mdash; 3 intermediate points.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P1L5.png" alt="Level 0" style="border:none;"/>
+      <figcaption>Level 4 &mdash; 2 intermediate points.</figcaption>
+    </div>
+
+    <div class="cell">
+      <img src="../HW2_Screenshots/P1L6.png" alt="Level 0" style="border:none;"/>
+      <figcaption>Level 5 &mdash; 1 final evaluated point (red).</figcaption>
+    </div>
+  </div>
+
+  <figure>
+    <img src="../HW2_Screenshots/P1L7.png" alt="Level 0" style="border:none;"/>
+    <figcaption>The completed Bezier curve drawn with <kbd>C</kbd> toggled on.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="../HW2_Screenshots/P1L8.png" alt="Level 0" style="border:none;"/>
+    <figcaption>
+      The same curve after moving three control points and scrolling to a different value of \(t\).
+    </figcaption>
+  </figure>
+
+  <!-- ------------------------------------------------------------ -->
+  <h3 id="part2">Part 2: Bezier Surfaces with Separable 1D de Casteljau</h3>
+  <!-- ------------------------------------------------------------ -->
+
+  <p>
+    A Bezier surface patch of degree \((n, n)\) is defined by an \(n \times n\) grid of control points.
+    It is evaluated at parameters \((u, v)\) by a separable application of the 1D de Casteljau algorithm:
+  </p>
+
+  <ol>
+    <li>
+      For each row \(i\) of control points \(\mathbf{p}_{i,0}, \ldots, \mathbf{p}_{i,n-1}\), fully
+      apply de Casteljau at parameter \(u\) to obtain a single point \(\mathbf{q}_i\).
+    </li>
+    <li>
+      Treat the \(n\) column points \(\mathbf{q}_0, \ldots, \mathbf{q}_{n-1}\) as a new 1D Bezier
+      curve and fully apply de Casteljau at parameter \(v\) to obtain the final surface point.
+    </li>
+  </ol>
+
+ 
+
+  <figure>
+    <img src="../HW2_Screenshots/P2S1.png" alt="Level 0" style="border:none;"/>
+    <figcaption>
+      <code>bez/teapot.bez</code> rendered as a Bezier surface.
+    </figcaption>
+  </figure>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Section II</div>
+  <h2>Triangle Meshes and Half-Edge Data Structure</h2>
+  <!-- ============================================================ -->
+
+  <h3 id="part3">Part 3: Area-Weighted Vertex Normals</h3>
+
+  <p>
+    Flat shading assigns one normal per face, producing a faceted appearance. Phong shading interpolates
+    per-vertex normals across the face, which requires a smooth normal estimate at every vertex. I
+    computed this by iterating over all faces incident to the vertex, weighting each face's normal by its
+    area, summing the results, and normalizing.
+  </p>
+
+  <p>
+    The area of a triangle with edge vectors \(\mathbf{e}_1\) and \(\mathbf{e}_2\) is
+    \(\frac{1}{2}\|\mathbf{e}_1 \times \mathbf{e}_2\|\). The direction of \(\mathbf{e}_1 \times
+    \mathbf{e}_2\) is also the face normal, so the area-weighted normal for one face is simply the
+    raw cross product \(\mathbf{e}_1 \times \mathbf{e}_2\) (the \(\frac{1}{2}\) cancels after
+    normalization). My implementation traverses the one-ring around the vertex with the
+    twin&ndash;next idiom:
+  </p>
+
+  <pre><code>Vector3D Vertex::normal() const {
+    Vector3D n(0, 0, 0);
+    HalfedgeCIter h = halfedge();
+    do {
+        if (!h-&gt;face()-&gt;isBoundary()) {
+            Vector3D p0 = h-&gt;vertex()-&gt;position;
+            Vector3D p1 = h-&gt;next()-&gt;vertex()-&gt;position;
+            Vector3D p2 = h-&gt;next()-&gt;next()-&gt;vertex()-&gt;position;
+            n += cross(p1 - p0, p2 - p0);
+        }
+        h = h-&gt;twin()-&gt;next();
+    } while (h != halfedge());
+    return n.unit();
+}</code></pre>
+
+  <p>
+    I skipped boundary faces with <code>isBoundary()</code> to avoid including the virtual boundary
+    face in the average.
+  </p>
+
+  <div class="img-grid">
+    <div class="cell">
+    <img src="../HW2_Screenshots/P3S1.png" alt="Flat shading" style="border:none;"/>
+      <figcaption>Flat shading (default, <kbd>Q</kbd> off).</figcaption>
+    </div>
+    <div class="cell">
+    <img src="../HW2_Screenshots/P3S2.png" alt="Phong shading" style="border:none;"/>
+      <figcaption>Phong shading with area-weighted vertex normals (<kbd>Q</kbd> on).</figcaption>
+    </div>
+  </div>
+
+  <!-- ------------------------------------------------------------ -->
+  <h3 id="part4">Part 4: Edge Flip</h3>
+  <!-- ------------------------------------------------------------ -->
+
+  <p>
+    This was pretty straightforward to implement since no new mesh elements are created or destroyed;
+    only pointers are reassigned.
+  </p>
+
+  <p>
+    I first checked whether the edge is a boundary edge and returned immediately if so.
+    Then I named every mesh element involved (all 6 inner half-edges of the two triangles
+    (<code>h0</code>&ndash;<code>h5</code>), their 4 outer twins, 4 vertices (<code>a</code>,
+    <code>b</code>, <code>c</code>, <code>d</code>), 5 edges, and 2 faces) and drew the before and
+    after configurations on paper. After the flip, <code>e0</code> becomes edge \((a, d)\):
+    face <code>f0</code> holds half-edges \(a\to d\), \(d\to c\), \(c\to a\) and face
+    <code>f1</code> holds \(d\to a\), \(a\to b\), \(b\to d\). I called <code>setNeighbors</code>
+    on all 6 inner half-edges and reassigned <code>halfedge()</code> for every vertex, edge, and
+    face. I did <em>not</em> re-call <code>setNeighbors</code> on the outer twins since their
+    <code>next</code>, <code>vertex</code>, <code>edge</code>, and <code>face</code> fields are
+    unaffected by the flip.
+  </p>
+
+  <p>
+    The debugging issue I encountered was a missing <code>face</code> field update inside one
+    <code>setNeighbors</code> call.
+  </p>
+
+  <div class="img-grid">
+    <div class="cell">
+   <img src="../HW2_Screenshots/P4S1.png" alt="Before flip" style="border:none;"/>
+      <figcaption>Teapot before edge flips.</figcaption>
+    </div>
+    <div class="cell">
+    <img src="../HW2_Screenshots/P4S2.png" alt="After flip" style="border:none;"/>
+      <figcaption>Teapot after several edge flips.</figcaption>
+    </div>
+  </div>
+
+  <!-- ------------------------------------------------------------ -->
+  <h3 id="part5">Part 5: Edge Split</h3>
+  <!-- ------------------------------------------------------------ -->
+
+
+  <p>
+    I allocated the new vertex and set its position to the midpoint of the original edge's
+    two endpoints. After drawing out the full diagram I wrote out every <code>setNeighbors</code>
+    call and <code>halfedge()</code> assignment.
+  </p>
+
+  <p>
+    The two original faces are reused (<code>f0</code> becomes triangle \(b,m,a\) and <code>f1</code>
+    becomes \(m,c,a\)) and two new faces are added for \(b,d,m\) and \(d,c,m\). The original edge
+    <code>e0</code> is reused as the \(b\text{-}m\) segment; a new edge <code>em</code> covers
+    \(m\text{-}c\). Two new diagonal edges <code>ea</code> (\(m\text{-}a\)) and <code>ed</code>
+    (\(m\text{-}d\)) are marked <code>isNew = true</code>. <code>em</code> is marked
+    <code>isNew = false</code> because it lies along the original edge and must <em>not</em> be
+    flipped during Loop subdivision. The new vertex \(m\) is also marked <code>isNew = true</code>.
+  </p>
+
+  <p>
+    My singular, uneventful debugging story: I initially set <code>m->halfedge() = h0</code>, but after reassignment
+    <code>h0</code> becomes \(b \to m\) — pointing <em>toward</em> \(m\), not away from it.
+    The fix was to assign <code>m->halfedge() = h3</code>, which after reassignment is \(m \to b\),
+    an outgoing half-edge from \(m\) along the original split edge.
+  </p>
+
+  <h4>Extra Credit:</h4>
+
+  <p>
+    <code>splitEdge</code> was extended to handle edges on the mesh boundary. A boundary edge has one
+    real face and one virtual boundary face. Splitting it inserts a midpoint vertex \(m\) and produces
+    two real triangles instead of four, while the boundary loop is re-routed through two new boundary
+    half-edges on either side of \(m\).
+  </p>
+
+  <p>
+    The key differences from the interior case is that there is no opposite vertex \(d\), so only two new
+    edges are created: <code>em</code> (\(m\text{-}c\), marked <code>isNew = false</code> since it
+    lies on the original edge) and <code>ea</code>(\(m\text{-}a\), the new interior diagonal, marked
+    <code>isNew = true</code>). Only one new real face is created (the \(m, c, a\) triangle). Four
+    new half-edges are created: \(m\to a\), \(a\to m\), \(m\to c\) (real face side), and \(m\to b\)
+    (boundary loop side). The old boundary half-edge \(c\to b\) is repurposed as \(c\to m\) and
+    re-pointed into the boundary face, while the new \(m\to b\) half-edge is inserted next to it in
+    the boundary loop. I walked the boundary loop to find the half-edge whose <code>next</code> was
+    \(c\to b\) and re-pointed it to maintain loop continuity. The new vertex's halfedge was set to
+    \(m\to c\) (real-face side), pointing along the original split edge direction.
+  </p>
+
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW2_Screenshots/P5S1.png" alt="Boundary before" style="border:none;"/>
+      <figcaption>No boundary edge splits.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P5S2.png" alt="Boundary after" style="border:none;"/>
+      <figcaption>After splitting the boundary edge — new midpoint vertex inserted, boundary loop intact.</figcaption>
+    </div>
+  </div>
+
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW2_Screenshots/P5S3.png" alt="Before splits" style="border:none;"/>
+      <figcaption>Original mesh before any splits.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P5S4.png" alt="After splits" style="border:none;"/>
+      <figcaption>After several edge splits on the top face.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P5S5.png" alt="Split and flip" style="border:none;"/>
+      <figcaption>Original mesh before any splits.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P5S6.png" alt="More splits and flips" style="border:none;"/>
+      <figcaption>FCombination of edge splits and edge flips applied to the same region.</figcaption>
+    </div>
+  </div>
+
+  <!-- ------------------------------------------------------------ -->
+  <h3 id="part6">Part 6: Loop Subdivision for Mesh Upsampling</h3>
+  <!-- ------------------------------------------------------------ -->
+
+  <p>
+    Implemented algorithm:
+  </p>
+
+  <ol>
+    <li>
+      For each original vertex with degree \(n\),
+      compute the Loop subdivision weighted average:
+      \[
+        \mathbf{p}_{\text{new}} = (1 - n\,u)\,\mathbf{p} + u\,\sum_{\text{neighbors}} \mathbf{p}_j
+      \]
+      where \(u = \tfrac{3}{16}\) if \(n = 3\), otherwise \(u = \tfrac{3}{8n}\). I stored this in
+      <code>Vertex::newPosition</code> and set <code>isNew = false</code> on each original vertex.
+    </li>
+    <li>
+      For each original edge between
+      vertices \(A\) and \(B\) with opposite vertices \(C\) and \(D\), store
+      \(\tfrac{3}{8}(A+B) + \tfrac{1}{8}(C+D)\) in <code>Edge::newPosition</code>.
+    </li>
+    <li>
+      Split every original edge. To avoid iterator invalidation and infinite loops
+      from newly created edges, collected all original edges into a
+      <code>std::vector&lt;EdgeIter&gt;</code>, then split each one in sequence. After each split copy the pre-computed <code>Edge::newPosition</code> into the new midpoint vertex's
+      <code>newPosition</code>.
+    </li>
+    <li>
+      Flip new edges connecting an old and a new vertex. An edge created by splitting
+      that connects one <code>isNew == false</code> vertex and one <code>isNew == true</code> vertex
+      is a diagonal that needs to be flipped to complete the 4-1 subdivision pattern.
+    </li>
+    <li>
+      Copy pre-computed positions into all vertices. Write
+      <code>Vertex::newPosition</code> into <code>Vertex::position</code> for every vertex. Both old
+      vertices (whose <code>newPosition</code> was set in Step 1) and new midpoint vertices (whose
+      <code>newPosition</code> was set in Step 3) are updated here.
+    </li>
+  </ol>
+
+
+  <p>
+    Sharp corners and edges become progressively smoother with each subdivision round. The Loop
+    weighting scheme pulls vertex positions toward the average of their neighbors, rounding off
+    high-curvature regions. After just a couple of iterations a mesh like the cube loses all its
+    crisp corners and begins to look like a rounded blob.
+  </p>
+
+
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW2_Screenshots/P6S1.png" alt="Cube level 0" style="border:none;"/>
+      <figcaption>Cube at subdivision level 0.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P6S2.png" alt="Cube level 1" style="border:none;"/>
+      <figcaption>Level 1 subdivision.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P6S3.png" alt="Cube level 2" style="border:none;"/>
+      <figcaption>Level 2 subdivision.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P6S4.png" alt="Cube level 3" style="border:none;"/>
+      <figcaption>Level 3 subdivision &mdash; the cube becomes noticeably asymmetric.</figcaption>
+    </div>
+  </div>
+
+
+  <p>
+    The default <code>cube.dae</code> has a single diagonal edge on each square face. The two corner
+    vertices connected by that diagonal end up with higher degree than the other two corners. Because
+    the Loop weight \(u = 3/(8n)\) decreases with degree \(n\), higher-degree vertices smooth more
+    aggressively toward their neighbors. This unequal smoothing compounds with every subdivision
+    round, producing a blob that clearly favors the diagonal direction of each face rather than
+    respecting the cube's full symmetry.
+  </p>
+
+  <p>
+    To get symmetric subdivision I pre-processed the cube by splitting the diagonal edge on every
+    face so that each square face contains an X-shaped crossing of two diagonals. This gives all
+    eight cube corners identical vertex degree (6) and makes the connectivity symmetric under the
+    cube's symmetry group. After this pre-processing the mesh subdivides symmetrically.
+  </p>
+
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW2_Screenshots/P6S5.png" alt="Pre-split cube level 0" style="border:none;"/>
+      <figcaption>Cube after pre-splitting every face diagonal (level 0).</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P6S6.png" alt="Pre-split cube level 1" style="border:none;"/>
+      <figcaption>Level 1 &mdash; already more symmetric than before.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P6S7.png" alt="Pre-split cube level 2" style="border:none;"/>
+      <figcaption>Level 2.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P6S8.png" alt="Pre-split cube level 3" style="border:none;"/>
+      <figcaption>Level 3 &mdash; the mesh is now a symmetric rounded cube.</figcaption>
+    </div>
+  </div>
+
+  <h4>Extra Credit: Loop Subdivision on Meshes with Boundary (+2 pts)</h4>
+
+  <p>
+    I extended <code>upsample</code> to correctly handle meshes that have boundary loops. The standard
+    Loop subdivision rules do not apply at the boundary; different formulas are required for both
+    boundary vertices and boundary edge midpoints.
+  </p>
+
+  <p>
+    <strong>Boundary edge midpoints</strong> use a simple average of their two endpoints rather than
+    the interior 3/8 + 1/8 weighted formula:
+    \[ \mathbf{p}_{\text{new}} = \tfrac{1}{2}(A + B) \]
+    This is applied whenever <code>e->isBoundary()</code> is true in Step 2.
+  </p>
+
+  <p>
+    <strong>Boundary vertices</strong> use a rule that blends the vertex with its two boundary
+    neighbors — the vertices immediately adjacent to it along the boundary loop:
+    \[ \mathbf{p}_{\text{new}} = \tfrac{1}{8}\,\mathbf{p}_{\text{left}} + \tfrac{3}{4}\,\mathbf{p} + \tfrac{1}{8}\,\mathbf{p}_{\text{right}} \]
+    To find the two boundary neighbors, I used the fact that the halfedge of a boundary vertex points
+    to the boundary face. One neighbor is <code>h->twin()->vertex()</code> and the other is
+    <code>h->next()->twin()->vertex()</code>, walking in opposite directions along the boundary loop.
+    Interior vertices adjacent to the boundary still use the standard Loop rule unchanged.
+  </p>
+
+  <p>
+    During Step 4, I also skipped flipping boundary edges (they connect to only one real face and
+    cannot be flipped). Step 3 uses the boundary-aware <code>splitEdge</code> from the Part 5 extra
+    credit to correctly handle boundary edges during subdivision.
+  </p>
+
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW2_Screenshots/P6S9.png" alt="Boundary mesh level 0" style="border:none;"/>
+      <figcaption>Boundary mesh at level 0.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P6S10.png" alt="Boundary mesh level 1" style="border:none;"/>
+      <figcaption>Level 1 &mdash; interior smooths, boundary curve remains clean.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P6S11.png" alt="Boundary mesh level 2" style="border:none;"/>
+      <figcaption>Level 2.</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW2_Screenshots/P6S12.png" alt="Boundary mesh level 3" style="border:none;"/>
+      <figcaption>Level 3 &mdash; smooth subdivision up to the boundary.</figcaption>
+    </div>
+  </div>
+
+
+</script>
+</body>
 </html>
