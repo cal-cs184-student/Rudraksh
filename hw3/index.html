@@ -1,106 +1,1010 @@
+<!DOCTYPE html>
 <html>
-	<head>
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-		<style>
-			h1 {
-				text-align: center;
-			}
+<head>
+  <script>
+    (function(){var s=localStorage.getItem('theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='dark'||((!s)&&d))document.documentElement.classList.add('dark');})();
+  </script>
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[', '\\]'], ['$$', '$$']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HW3 &mdash; CS184/284A Spring 2026</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-			.container {
-				margin: 0 auto;
-				padding: 60px 20%;
-			}
+    :root {
+      --bg: #f9f9f8;
+      --surface: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #6b6b6b;
+      --text-faint: #9b9b9b;
+      --accent: #2563eb;
+      --accent-light: rgba(37,99,235,0.07);
+      --border: #e5e5e3;
+      --border-strong: #d0d0ce;
+      --code-bg: #f3f3f1;
+      --code-color: #c62a2a;
+      --radius: 8px;
+      --radius-lg: 12px;
+      --btn-bg: #ebebea;
+      --btn-hover: #dededc;
+      --row-alt: #fafaf9;
+    }
 
-			figure {
-				text-align: center;
-			}
+    html.dark {
+      --bg: #1e1e1e;
+      --surface: #2d2d2d;
+      --text: #ececec;
+      --text-muted: #999999;
+      --text-faint: #666666;
+      --accent: #5b9cf6;
+      --accent-light: rgba(91,156,246,0.1);
+      --border: #3d3d3d;
+      --border-strong: #4d4d4d;
+      --code-bg: #252525;
+      --code-color: #f28b82;
+      --btn-bg: #3a3a3a;
+      --btn-hover: #444444;
+      --row-alt: #333333;
+    }
 
-			img {
-				display: inline-block;
-			}
+    /* ── Theme toggle ── */
+    #theme-toggle {
+      position: fixed;
+      top: 18px;
+      right: 20px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      background: var(--btn-bg);
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: background 0.15s, color 0.15s;
+    }
+    #theme-toggle:hover { background: var(--btn-hover); color: var(--text); }
+    #theme-toggle svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .icon-sun  { display: none; }
+    .icon-moon { display: block; }
+    html.dark .icon-sun  { display: block; }
+    html.dark .icon-moon { display: none; }
 
-			body {
-				font-family: 'Inter', sans-serif;
-			}
-		</style>
-	</head>
-	<body>
-		<div class="container">
-		<h1>CS184/284A Spring 2025 Homework 3 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+    html { scroll-behavior: smooth; }
 
-		<br>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
 
-		Link to webpage: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
-		
-		<figure>
-			<img src="cornell.png" alt="Cornell Boxes with Bunnies" style="width:70%"/>
-			<figcaption>You can add images with captions!</figcaption>
-		</figure>
+    /* ── Layout ── */
+    .page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 80px 40px 120px;
+    }
 
-		<!--
-		We've already added one heading per part, to make your write-up as navigable when grading. Please fit your write-up within these sections!
-		-->
+    /* ── Header ── */
+    .site-header {
+      margin-bottom: 72px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .site-header .label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .site-header h1 {
+      font-size: 30px;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+    .author {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .header-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .header-link-label { font-size: 13px; color: var(--text-muted); }
+    .header-links a { color: var(--accent); text-decoration: none; }
+    .header-links a:hover { text-decoration: underline; }
 
-		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
+    /* ── TOC ── */
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      margin-bottom: 64px;
+    }
+    .toc-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .toc ol {
+      list-style: none;
+      counter-reset: toc;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-left: 0;
+    }
+    .toc li { counter-increment: toc; margin-bottom: 0; }
+    .toc a {
+      font-size: 14px;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+    }
+    .toc a::before {
+      content: counter(toc, decimal-leading-zero);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-faint);
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .toc a:hover { color: var(--accent); }
 
-		<h2>Part 1: Ray Generation and Scene Intersection</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    /* ── Section labels ── */
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-light);
+      padding: 4px 10px;
+      border-radius: 100px;
+      margin-bottom: 12px;
+    }
 
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
-		<div style="display: flex; flex-direction: column; align-items: center;">
-			<table style="width: 100%; text-align: center; border-collapse: collapse;">
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			</table>
-		</div>
-		
-		<h2>Part 2: Bounding Volume Hierarchy</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    /* ── Section dividers ── */
+    .divider { height: 1px; background: var(--border); margin: 64px 0; }
 
-		<h2>Part 3: Direct Illumination</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    /* ── Typography ── */
+    h2 {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: var(--text);
+      scroll-margin-top: 32px;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 28px;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    ul, ol { padding-left: 20px; margin-bottom: 14px; }
+    li { margin-bottom: 6px; }
+    li:last-child { margin-bottom: 0; }
 
-		<h2>Part 4: Global Illumination</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    /* ── Code ── */
+    code {
+      font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+      font-size: 12.5px;
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--code-color);
+    }
+    pre {
+      font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+      font-size: 12.5px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      overflow-x: auto;
+      line-height: 1.65;
+      margin: 18px 0;
+      color: var(--text);
+    }
+    pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    kbd {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      padding: 1px 6px;
+      color: var(--text);
+    }
 
-		<h2>Part 5: Adaptive Sampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    /* ── Figures & images ── */
+    figure { margin: 28px 0; text-align: center; }
+    figure img {
+      max-width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: inline-block;
+    }
+    figcaption {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
 
-		<h2>(Optional) Part 6: Extra Credit Opportunities</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-		
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
-		</div>
-	</body>
+    /* ── Image grid ── */
+    .img-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 28px 0;
+    }
+    .img-grid .cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+    }
+    .img-grid .cell img {
+      width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: block;
+    }
+    .img-grid .cell figcaption {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ── Links ── */
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Timing table ── */
+    .timing-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 14px;
+    }
+    .timing-table th {
+      background: var(--row-alt);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .timing-table th:not(:first-child) { text-align: right; }
+    .timing-table td {
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+    }
+    .timing-table td:not(:first-child) { text-align: right; }
+    .timing-table tr:nth-child(even) td { background: var(--row-alt); }
+
+    @media (max-width: 600px) {
+      .page { padding: 48px 20px 80px; }
+      .img-grid { grid-template-columns: 1fr; }
+      h2 { font-size: 19px; }
+      .site-header h1 { font-size: 24px; }
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var btn = document.getElementById('theme-toggle');
+      btn.addEventListener('click', function() {
+        var isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
+    });
+  </script>
+</head>
+<body>
+
+<button id="theme-toggle" aria-label="Toggle dark mode">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"/>
+    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+</button>
+
+<div class="page">
+
+  <!-- ── Header ── -->
+  <header class="site-header">
+    <p class="label">YOUR NAME(S) &middot; CS184/284A &middot; Spring 2026</p>
+    <h1>Homework 3: PathTracer Write-Up</h1>
+    <div class="header-links">
+      <span class="header-link-label">Website URL: <a href="TODO">TODO</a></span>
+    </div>
+  </header>
+
+  <!-- ── TOC ── -->
+  <nav class="toc">
+    <p class="toc-title">Contents</p>
+    <ol>
+      <li><a href="#part1">Ray Generation and Scene Intersection</a></li>
+      <li><a href="#part2">Bounding Volume Hierarchy</a></li>
+      <li><a href="#part3">Direct Illumination</a></li>
+      <li><a href="#part4">Global Illumination</a></li>
+      <li><a href="#part5">Adaptive Sampling</a></li>
+    </ol>
+  </nav>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Part 1</div>
+  <h2 id="part1">Part 1: Ray Generation and Scene Intersection (17 Points)</h2>
+  <!-- ============================================================ -->
+
+  <h3>Task 1: Generating Camera Rays</h3>
+  <p>
+    The first step is mapping a normalized image-space coordinate \((x, y) \in [0,1]^2\)
+    to a ray in world space. The virtual camera sits at the origin of camera space and
+    looks along the \(-Z\) axis. A sensor plane lives at \(z = -1\), and its extents
+    are determined by the horizontal and vertical field of view:
+    \[
+      x_\text{sensor} \in \bigl[-\tan(\tfrac{\text{hFov}}{2}),\; \tan(\tfrac{\text{hFov}}{2})\bigr], \quad
+      y_\text{sensor} \in \bigl[-\tan(\tfrac{\text{vFov}}{2}),\; \tan(\tfrac{\text{vFov}}{2})\bigr]
+    \]
+    Given normalized image coordinates \((x, y)\), the corresponding sensor point in camera space is:
+    \[
+      \mathbf{p}_\text{cam} = \Bigl((2x - 1)\tan\tfrac{\text{hFov}}{2},\;\; (2y - 1)\tan\tfrac{\text{vFov}}{2},\;\; -1\Bigr)
+    \]
+    This direction is then rotated into world space using the camera-to-world matrix
+    <code>c2w</code> and normalized. The resulting ray originates at the camera
+    position <code>pos</code> with <code>min_t = nClip</code> and <code>max_t = fClip</code>.
+  </p>
+
+  <h3>Task 2: Generating Pixel Samples</h3>
+  <p>
+    A single ray per pixel would give an aliased result. Instead, <code>raytrace_pixel</code>
+    generates <code>ns_aa</code> rays per pixel, each with a random subpixel jitter drawn
+    from a <code>UniformGridSampler2D</code>. For pixel \((x, y)\) the jittered sample
+    \((x + \xi_x,\; y + \xi_y)\) is normalized by the image dimensions before being
+    passed to <code>generate_ray</code>. The returned radiance values are averaged to
+    form a Monte Carlo estimate of the pixel integral:
+    \[
+      \hat{L}(x,y) = \frac{1}{N} \sum_{i=1}^{N} L\!\left(\text{ray}_i\right)
+    \]
+    The result is written to <code>sampleBuffer</code> via <code>update_pixel</code>,
+    and the sample count is stored in <code>sampleCountBuffer</code> (needed by the
+    adaptive sampler in Part 5).
+  </p>
+
+  <h3>Task 3: Ray-Triangle Intersection</h3>
+  <p>
+    Triangle intersection is implemented using the <strong>Möller–Trumbore algorithm</strong>,
+    which avoids explicitly computing the triangle's plane. Given a ray
+    \(\mathbf{r}(t) = \mathbf{o} + t\mathbf{d}\) and triangle vertices
+    \(\mathbf{p}_1, \mathbf{p}_2, \mathbf{p}_3\), the system
+    \[
+      \mathbf{o} + t\mathbf{d} = (1 - b_1 - b_2)\,\mathbf{p}_1 + b_1\,\mathbf{p}_2 + b_2\,\mathbf{p}_3
+    \]
+    is solved in closed form using cross and dot products. The solution gives
+    \([t,\; b_1,\; b_2]\). The intersection is valid only when:
+  </p>
+  <ul>
+    <li>\(t \in [\texttt{min\_t},\; \texttt{max\_t}]\) — the hit is within the ray's active segment</li>
+    <li>\(b_1 \geq 0,\; b_2 \geq 0,\; b_1 + b_2 \leq 1\) — the hit point is inside the triangle</li>
+  </ul>
+  <p>
+    On a valid hit, <code>ray.max_t</code> is tightened to \(t\) so that subsequent
+    intersection tests automatically reject farther hits. The surface normal is
+    interpolated from the per-vertex normals using the barycentric weights:
+    \[
+      \mathbf{n} = (1 - b_1 - b_2)\,\mathbf{n}_1 + b_1\,\mathbf{n}_2 + b_2\,\mathbf{n}_3, \quad \text{normalized}
+    \]
+    This gives smooth shading across curved surfaces even though the geometry is
+    faceted. The <code>Intersection</code> struct is then populated with \(t\),
+    \(\mathbf{n}\), the primitive pointer, and the surface BSDF.
+  </p>
+
+  <h3>Task 4: Ray-Sphere Intersection</h3>
+  <p>
+    Substituting the ray equation into the sphere equation
+    \(|\mathbf{r}(t) - \mathbf{c}|^2 = R^2\) yields the quadratic:
+    \[
+      a\,t^2 + b\,t + c = 0, \qquad
+      a = |\mathbf{d}|^2, \quad
+      b = 2\,\mathbf{d} \cdot (\mathbf{o} - \mathbf{c}), \quad
+      c = |\mathbf{o} - \mathbf{c}|^2 - R^2
+    \]
+    If the discriminant \(\Delta = b^2 - 4ac < 0\) the ray misses the sphere entirely.
+    Otherwise the two roots are:
+    \[
+      t_{1,2} = \frac{-b \mp \sqrt{\Delta}}{2a}
+    \]
+    The smaller root \(t_1\) is tested first; if it falls outside
+    \([\texttt{min\_t},\; \texttt{max\_t}]\) the larger \(t_2\) is tried.
+    The surface normal at the hit is computed analytically as the unit vector from
+    the sphere centre to the intersection point:
+    \[
+      \mathbf{n} = \frac{\mathbf{r}(t) - \mathbf{c}}{R}
+    \]
+    The <code>Intersection</code> record is then filled identically to the triangle case,
+    and <code>ray.max_t</code> is tightened.
+  </p>
+
+  <h3>Normal-Shading Renders</h3>
+  <p>
+    With all four tasks complete the renderer visualizes surface normals as RGB colors
+    — a standard debugging view that confirms both ray generation and intersection are
+    working correctly.
+  </p>
+
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW3_Screenshots/p1_CBempty.png" alt="CBempty normal shading">
+      <figcaption>CBempty.dae — normal shading</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p1_CBspheres.png" alt="CBspheres normal shading">
+      <figcaption>CBspheres_lambertian.dae — normal shading</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p1_cow.png" alt="cow normal shading">
+      <figcaption>cow.dae — normal shading</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p1_teapot.png" alt="teapot normal shading">
+      <figcaption>teapot.dae — normal shading</figcaption>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Part 2</div>
+  <h2 id="part2">Part 2: Bounding Volume Hierarchy (20 Points)</h2>
+  <!-- ============================================================ -->
+
+  <h3>Task 1: Constructing the BVH</h3>
+  <p>
+    Without acceleration, every ray must be tested against every primitive — O(n) per
+    ray, which makes complex meshes completely infeasible. The BVH organizes primitives
+    into a binary tree of axis-aligned bounding boxes so that large swaths of geometry
+    can be skipped with a single cheap box test, bringing the per-ray cost down to
+    O(log n).
+  </p>
+  <p>
+    Construction is recursive. At each call we receive an iterator range
+    <code>[start, end)</code> into the global primitive list:
+  </p>
+  <ol>
+    <li>
+      <strong>Compute the node's bounding box</strong> by expanding an initially empty
+      <code>BBox</code> over every primitive's bounding box in the range.
+    </li>
+    <li>
+      <strong>Leaf test:</strong> if the count \(\leq\) <code>max_leaf_size</code> (default 4),
+      create a leaf node, set its <code>start</code> / <code>end</code> iterators, and return.
+    </li>
+    <li>
+      <strong>Choose a split axis:</strong> build the bounding box of all primitive
+      centroids and pick the axis along which it has the largest extent. Splitting the
+      widest dimension tends to produce compact, balanced subtrees.
+    </li>
+    <li>
+      <strong>Partition:</strong> compute the average centroid along the chosen axis as the
+      split point, then use <code>std::partition</code> to reorder primitives so those
+      whose centroid lies below the split go left, the rest go right.
+    </li>
+    <li>
+      <strong>Infinite-recursion guard:</strong> if all centroids fall on one side
+      (e.g. many coincident primitives), the partition produces an empty half and the
+      algorithm would recurse forever. This is caught by checking whether
+      <code>mid == start</code> or <code>mid == end</code> and forcing a balanced
+      midpoint split instead.
+    </li>
+    <li>Recurse on each half and attach the results as <code>l</code> and <code>r</code>.</li>
+  </ol>
+
+  <h3>Task 2: Intersecting the Bounding Box</h3>
+  <p>
+    <code>BBox::intersect</code> uses the <strong>slab method</strong>. Each axis-aligned
+    pair of planes is treated as a "slab," and the ray is intersected with both planes
+    to produce a \([t_\text{near},\; t_\text{far}]\) interval. Accumulating the
+    intersection of all three slab intervals gives the range of \(t\) for which the
+    ray is inside the box:
+    \[
+      t_\text{near}^{(i)} = \frac{\text{min}_i - o_i}{d_i}, \qquad
+      t_\text{far}^{(i)}  = \frac{\text{max}_i - o_i}{d_i}
+    \]
+    If \(d_i < 0\) the two values are swapped so \(t_\text{near} \leq t_\text{far}\)
+    always holds. The overall entry time is \(\max_i t_\text{near}^{(i)}\) and the
+    exit time is \(\min_i t_\text{far}^{(i)}\). A hit occurs when entry \(\leq\) exit
+    and the interval overlaps \([\texttt{min\_t},\; \texttt{max\_t}]\). Using the
+    pre-computed <code>ray.inv_d</code> avoids per-axis division and correctly handles
+    rays aligned with an axis via IEEE 754 infinity arithmetic.
+  </p>
+
+  <h3>Task 3: Intersecting the BVH</h3>
+  <p>
+    Both traversal functions test the current node's bounding box first using a
+    <em>local copy</em> of <code>t0, t1</code> so the ray's valid interval is not
+    mutated by the bbox test. If the box is missed, the subtree is pruned immediately.
+  </p>
+  <p>
+    <strong>has_intersection</strong> can short-circuit: as soon as any primitive
+    reports a hit, the function returns <code>true</code> without testing the other child.
+    This makes shadow-ray queries very fast.
+  </p>
+  <p>
+    <strong>intersect</strong> must find the <em>nearest</em> hit, so both children
+    are always visited when their bounding box is hit. The key insight is that
+    primitive intersection functions tighten <code>ray.max_t</code> on every hit, so
+    after the left subtree is processed, the right subtree's bbox test automatically
+    rejects any branch that could only produce a farther intersection — no explicit
+    distance comparison is needed in the traversal code itself.
+  </p>
+
+  <h3>Large Scenes — Only Feasible With BVH</h3>
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW3_Screenshots/p2_maxplanck.png" alt="Max Planck model rendered with BVH acceleration">
+      <figcaption>maxplanck.dae — normal shading</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p2_CBlucy.png" alt="Lucy statue inside Cornell box, normal shading">
+      <figcaption>CBlucy.dae — normal shading</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p2_dragon.png" alt="Stanford dragon in normal shading">
+      <figcaption>dragon.dae — normal shading</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p2_beast.png" alt="Beast mesh in normal shading">
+      <figcaption>beast.dae — normal shading</figcaption>
+    </div>
+  </div>
+
+  <h3>Rendering Time Comparison: With vs. Without BVH</h3>
+
+  <table class="timing-table">
+    <tr>
+      <th>Scene</th>
+      <th>Without BVH (s)</th>
+      <th>With BVH (s)</th>
+      <th>Speedup</th>
+    </tr>
+    <tr>
+      <td>maxplanck.dae</td>
+      <td>2.725</td>
+      <td>0.015</td>
+      <td>181.7x</td>
+    </tr>
+    <tr>
+      <td>CBlucy.dae</td>
+      <td>8.738</td>
+      <td>0.010</td>
+      <td>873.8x</td>
+    </tr>
+    <tr>
+      <td>dragon.dae</td>
+      <td>6.773</td>
+      <td>0.012</td>
+      <td>564.4x</td>
+    </tr>
+    <tr>
+      <td>beast.dae</td>
+      <td>3.702</td>
+      <td>0.011</td>
+      <td>336.5x</td>
+    </tr>
+  </table>
+
+  <p>
+    The BVH delivers dramatic speedups across all four scenes, ranging from 182× on maxplanck to
+    874× on CBlucy. Without BVH acceleration, every ray must test against every primitive in the
+    scene, giving O(n) intersection cost per ray — for a 480×360 image with tens or hundreds of
+    thousands of triangles, that cost dominates entirely. With the BVH, each ray descends the tree
+    and prunes entire subtrees the moment their bounding box is missed, reducing the average number
+    of primitive tests to roughly O(log n). The larger speedups on CBlucy and dragon compared to
+    maxplanck reflect their higher primitive counts: CBlucy has on the order of 100k+ triangles, so
+    the gap between linear and logarithmic traversal is correspondingly wider. The tiny with-BVH
+    times (10–15 ms) show the traversal overhead is negligible — the bottleneck has fully shifted
+    from intersection testing to other fixed costs like BVH construction and image I/O.
+  </p>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Part 3</div>
+  <h2 id="part3">Part 3: Direct Illumination</h2>
+  <!-- ============================================================ -->
+
+  <h3>Task 1: Diffuse BSDF</h3>
+  <p>
+    A Lambertian (perfectly diffuse) surface scatters incoming light equally in all directions across the
+    hemisphere. The BSDF evaluation is simply \( f(\omega_i \to \omega_r) = \frac{\rho}{\pi} \), where
+    \(\rho\) is the albedo (reflectance) of the surface and the \(\pi\) in the denominator comes from
+    normalizing over the hemisphere so energy is conserved. The directions \(\omega_i\) and \(\omega_o\)
+    don't matter for a perfectly diffuse surface — it reflects the same fraction regardless of angle.
+    <code>sample_f</code> delegates to the cosine-weighted hemisphere sampler and then calls <code>f</code>.
+  </p>
+
+  <h3>Task 2: Zero-bounce Illumination</h3>
+  <p>
+    Zero-bounce radiance is the light emitted directly by the intersected surface — no scattering involved.
+    This is what makes the area light itself appear as a bright white rectangle in the rendered image.
+    The implementation simply returns <code>isect.bsdf->get_emission()</code>. For non-emissive surfaces
+    (walls, bunny, floor) this returns zero; for the area light's <code>EmissionBSDF</code> it returns the
+    configured radiance.
+  </p>
+
+  <h3>Task 3: Direct Lighting with Uniform Hemisphere Sampling</h3>
+  <p>
+    For hemisphere sampling, we approximate the rendering equation integral with a Monte Carlo estimator
+    by drawing \(N\) directions \(\omega_j\) uniformly from the hemisphere around the hit point:
+    \[
+      L_r(p, \omega_r) \approx \frac{1}{N} \sum_{j=1}^{N}
+        \frac{f_r(p, \omega_j \to \omega_r)\, L_i(p, \omega_j)\, \cos\theta_j}{p(\omega_j)}
+    \]
+    The PDF for uniform hemisphere sampling is \(p(\omega) = \frac{1}{2\pi}\). For each sample we cast a
+    shadow ray from the hit point in the sampled world-space direction; if it hits an emissive surface we
+    accumulate the contribution. The \(\cos\theta\) term is just \(\omega_i.z\) in local object space since
+    the normal is aligned with \(\hat{z}\). The final estimate is divided by \(N\).
+  </p>
+
+  <h3>Task 4: Direct Lighting by Importance Sampling Lights</h3>
+  <p>
+    Instead of sampling random hemisphere directions (most of which miss the light entirely), importance
+    sampling queries each light directly via <code>sample_L</code>, which returns a direction
+    \(\omega_i\), distance, PDF, and emitted radiance for a point on the light. We then cast a shadow ray
+    with <code>max_t = distToLight - EPS_F</code> to check for occlusion. If unoccluded, we accumulate
+    \( f \cdot L \cdot \cos\theta / \text{pdf} \). Delta lights (point/directional) are sampled once; area
+    lights are sampled <code>ns_area_light</code> times and averaged. Samples where
+    \(\cos\theta \leq 0\) (light behind the surface) are skipped outright without casting a ray.
+    This produces far less noise than hemisphere sampling for the same sample budget because every sample
+    is guaranteed to point toward a light.
+  </p>
+
+  <h3>Hemisphere vs. Importance Sampling Comparison</h3>
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW3_Screenshots/p3_CBbunny_H_16_8.png" alt="CBbunny hemisphere sampling s=16 l=8">
+      <figcaption>CBbunny — hemisphere sampling, s=16, l=8</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p3_CBbunny_I_16_8.png" alt="CBbunny importance sampling s=16 l=8">
+      <figcaption>CBbunny — importance sampling, s=16, l=8</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p3_CBbunny_H_64_32.png" alt="CBbunny hemisphere sampling s=64 l=32">
+      <figcaption>CBbunny — hemisphere sampling, s=64, l=32</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p3_CBbunny_I_64_32.png" alt="CBbunny importance sampling s=64 l=32">
+      <figcaption>CBbunny — importance sampling, s=64, l=32</figcaption>
+    </div>
+  </div>
+
+  <h3>Noise vs. Number of Light Rays (Importance Sampling, s=1)</h3>
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW3_Screenshots/p3_bunny_l1.png" alt="CBbunny importance sampling s=1 l=1">
+      <figcaption>l=1 light ray</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p3_bunny_l4.png" alt="CBbunny importance sampling s=1 l=4">
+      <figcaption>l=4 light rays</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p3_bunny_l16.png" alt="CBbunny importance sampling s=1 l=16">
+      <figcaption>l=16 light rays</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p3_bunny_l64.png" alt="CBbunny importance sampling s=1 l=64">
+      <figcaption>l=64 light rays</figcaption>
+    </div>
+  </div>
+
+  <h3>Analysis: Hemisphere vs. Importance Sampling</h3>
+  <p>
+    Uniform hemisphere sampling draws directions randomly across the entire upper hemisphere, so the
+    probability of any given sample actually pointing toward the (relatively small) area light is very low.
+    Most samples contribute zero — they hit a wall or the floor, which are non-emissive — and the
+    estimator wastes the entire sample budget on zero-contribution directions. The result converges
+    correctly in expectation but with very high variance, visible as heavy noise especially in soft shadow
+    regions. Importance sampling sidesteps this by sampling directions directly toward each light source,
+    so every non-occluded sample contributes useful signal. The only noise that remains comes from
+    whether the shadow ray is blocked or not, which is a binary outcome — much lower variance than the
+    hemisphere case. At s=16, l=8 the difference is stark: hemisphere renders look grainy and speckled
+    while importance renders show smooth color and recognizable soft shadows. Both methods are unbiased
+    and converge to the same result, but importance sampling gets there far faster.
+  </p>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Part 4</div>
+  <h2 id="part4">Part 4: Global Illumination</h2>
+  <!-- ============================================================ -->
+
+  <h3>Implementation of Indirect Lighting</h3>
+  <p>
+    <code>at_least_one_bounce_radiance</code> extends direct lighting into full global illumination by
+    recursively tracing the path a photon took to arrive at each surface point. The function first adds
+    one-bounce direct radiance (unless in non-accumulate mode at a depth above the target). It then
+    samples a new outgoing direction using <code>BSDF::sample_f</code>, which for a Lambertian surface
+    draws cosine-weighted directions from the hemisphere. The sampled direction is converted from
+    local object space to world space via the <code>o2w</code> matrix, and a new bounce ray is cast from
+    the hit point (offset by <code>EPS_F</code> to avoid self-intersection). If that ray hits the scene,
+    the function recurses, accumulating the contribution weighted by the BSDF value, cosine factor, and
+    BSDF PDF: \( \frac{f_r \cdot L_{indirect} \cdot \cos\theta}{p(\omega_i)} \).
+  </p>
+  <p>
+    <strong>Russian Roulette</strong> (Task 3) prevents infinite recursion unbiasedly. A continuation
+    probability of \(p_c = 0.65\) is used: each bounce after the first is traced only if
+    <code>coin_flip(0.65)</code> returns true, and the contribution is divided by \(p_c\) to keep the
+    estimator unbiased. The first indirect bounce is always taken when <code>max_ray_depth &gt; 1</code>,
+    so low depth values still produce meaningful results.
+  </p>
+  <p>
+    The <code>isAccumBounces</code> flag controls whether radiance accumulates across all bounces up to
+    the depth limit (true, default) or only the light arriving at exactly bounce <code>max_ray_depth</code>
+    is returned (false). In non-accumulate mode, the one-bounce term is only added when the ray is at
+    depth 1 (the final bounce), so intermediate recursion levels pass through only the indirect term.
+  </p>
+
+  <h3>Global Illumination Renders (s=1024)</h3>
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_spheres_global.png" alt="CBspheres_lambertian - global illumination, s=1024">
+      <figcaption>CBspheres_lambertian — global illumination, s=1024</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_global.png" alt="CBbunny - global illumination, s=1024">
+      <figcaption>CBbunny — global illumination, s=1024</figcaption>
+    </div>
+  </div>
+
+  <h3>Direct vs. Indirect Illumination Only (CBbunny, s=1024)</h3>
+  <p>
+    To isolate direct illumination, set <code>max_ray_depth=1</code>. To isolate indirect only, remove
+    the <code>one_bounce_radiance</code> call from <code>at_least_one_bounce_radiance</code> and use
+    <code>max_ray_depth&gt;=2</code>.
+  </p>
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_direct_only.png" alt="CBbunny — direct illumination only (m=1)">
+      <figcaption>CBbunny — direct illumination only (m=1)</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_indirect_only.png" alt="CBbunny — indirect illumination only (m=5, no direct)">
+      <figcaption>CBbunny — indirect illumination only (m=5, no direct)</figcaption>
+    </div>
+  </div>
+
+  <h3>Unaccumulated Bounces: CBbunny, isAccumBounces=false</h3>
+  <p>
+    With <code>isAccumBounces=false</code> (the <code>-o 0</code> flag), only the light arriving at
+    exactly the <em>m</em>-th bounce is returned. The 2nd bounce captures light that has reflected once
+    off a surface before reaching the camera — this is where most color bleeding originates, since red
+    and blue wall light first reflects off the floor/bunny and then reaches the camera. The 3rd bounce
+    and beyond contribute diminishing amounts of softly scattered fill light that rasterization cannot
+    produce at all, since rasterization has no notion of light traveling between diffuse surfaces.
+  </p>
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_m0_noaccum.png" alt="CBbunny — zero-bounce only (m=0)">
+      <figcaption>m=0 (zero bounce only)</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_m1_noaccum.png" alt="CBbunny — direct illumination only (m=1)">
+      <figcaption>m=1 (1st bounce only)</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_m2_noaccum.png" alt="CBbunny — 2nd bounce only (m=2)">
+      <figcaption>m=2 (2nd bounce only)</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_m3_noaccum.png" alt="CBbunny — 3rd bounce only (m=3)">
+      <figcaption>m=3 (3rd bounce only)</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_m4_noaccum.png" alt="CBbunny — 4th bounce only (m=4)">
+      <figcaption>m=4 (4th bounce only)</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_m5_noaccum.png" alt="CBbunny — 5th bounce only (m=5)">
+      <figcaption>m=5 (5th bounce only)</figcaption>
+    </div>
+  </div>
+
+  <h3>Accumulated Bounces: CBbunny, isAccumBounces=true</h3>
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_m0_accum.png" alt="CBbunny — accumulated bounces, m=0">
+      <figcaption>m=0 accumulated</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_m1_accum.png" alt="CBbunny — accumulated bounces, m=1">
+      <figcaption>m=1 accumulated</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_m2_accum.png" alt="CBbunny — accumulated bounces, m=2">
+      <figcaption>m=2 accumulated</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_m3_accum.png" alt="CBbunny — accumulated bounces, m=3">
+      <figcaption>m=3 accumulated</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_m4_accum.png" alt="CBbunny — accumulated bounces, m=4">
+      <figcaption>m=4 accumulated</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_m5_accum.png" alt="CBbunny — accumulated bounces, m=5">
+      <figcaption>m=5 accumulated</figcaption>
+    </div>
+  </div>
+
+  <h3>Russian Roulette: CBbunny at Various Max Depths (s=1024)</h3>
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_rr_m0.png" alt="Russian Roulette m=0">
+      <figcaption>Russian Roulette m=0</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_rr_m1.png" alt="Russian Roulette m=1">
+      <figcaption>Russian Roulette m=1</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_rr_m2.png" alt="Russian Roulette m=2">
+      <figcaption>Russian Roulette m=2</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_rr_m3.png" alt="Russian Roulette m=3">
+      <figcaption>Russian Roulette m=3</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_rr_m4.png" alt="Russian Roulette m=4">
+      <figcaption>Russian Roulette m=4</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_rr_m100.png" alt="Russian Roulette m=100">
+      <figcaption>Russian Roulette m=100</figcaption>
+    </div>
+  </div>
+
+  <h3>Sample Rate Comparison: CBbunny, l=4, varying s</h3>
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_s1.png" alt="CBbunny, s=1">
+      <figcaption>s=1</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_s2.png" alt="CBbunny, s=2">
+      <figcaption>s=2</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_s4.png" alt="CBbunny, s=4">
+      <figcaption>s=4</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_s8.png" alt="CBbunny, s=8">
+      <figcaption>s=8</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_s16.png" alt="CBbunny, s=16">
+      <figcaption>s=16</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_s64.png" alt="CBbunny, s=64">
+      <figcaption>s=64</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p4_bunny_s1024.png" alt="CBbunny, s=1024">
+      <figcaption>s=1024</figcaption>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Part 5</div>
+  <h2 id="part5">Part 5: Adaptive Sampling</h2>
+  <!-- ============================================================ -->
+
+  <h3>Algorithm &amp; Implementation</h3>
+  <p>
+    Uniform sampling wastes computation on pixels that have already converged. Adaptive sampling
+    detects convergence per-pixel using a statistical confidence interval and stops early once a pixel
+    is stable. For each pixel we maintain two running sums over the illuminance \(x_k\) of each sample:
+    \[
+      s_1 = \sum_{k=1}^{n} x_k \qquad s_2 = \sum_{k=1}^{n} x_k^2
+    \]
+    From these we compute the mean \(\mu = s_1/n\) and variance
+    \(\sigma^2 = \frac{1}{n-1}\!\left(s_2 - \frac{s_1^2}{n}\right)\).
+    The convergence measure is the half-width of a 95% confidence interval:
+    \[
+      I = 1.96 \cdot \frac{\sigma}{\sqrt{n}}
+    \]
+    We stop tracing rays for this pixel when \(I \leq \texttt{maxTolerance} \cdot \mu\)
+    (default \(\texttt{maxTolerance} = 0.05\)), meaning we are 95% confident the true mean is within
+    5% of our estimate.
+  </p>
+  <p>
+    In <code>raytrace_pixel</code>, convergence is checked every <code>samplesPerBatch</code> samples
+    (default 32) to avoid the overhead of checking every single sample. When convergence is detected
+    early, <code>sampleCountBuffer</code> is written with the actual number of samples used, which
+    drives the false-color rate image: blue = few samples (converged quickly), red = many samples
+    (hard to converge).
+  </p>
+
+  <h3>Adaptive Sampling Results</h3>
+  <p>Two scenes rendered with <code>s=2048 -a 64 0.05 -l 1 -m 5</code>. Each scene shows the
+  noise-free render alongside its sample rate image.</p>
+
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../HW3_Screenshots/p5_bunny.png" alt="CBbunny — noise-free render (adaptive, s≤2048)">
+      <figcaption>CBbunny — noise-free render (adaptive, s≤2048)</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p5_bunny_rate.png" alt="CBbunny — sample rate image">
+      <figcaption>CBbunny — sample rate image</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p5_spheres.png" alt="CBspheres — noise-free render (adaptive, s≤2048)">
+      <figcaption>CBspheres — noise-free render (adaptive, s≤2048)</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../HW3_Screenshots/p5_spheres_rate.png" alt="CBspheres — sample rate image">
+      <figcaption>CBspheres — sample rate image</figcaption>
+    </div>
+  </div>
+
+</div><!-- .page -->
+
+</body>
 </html>
