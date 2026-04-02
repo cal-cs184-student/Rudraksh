@@ -360,10 +360,11 @@
 
   <!-- ── Header ── -->
   <header class="site-header">
-    <p class="label">YOUR NAME(S) &middot; CS184/284A &middot; Spring 2026</p>
+    <p class="label">Rudraksh Awasthi &middot; CS184/284A &middot; Spring 2026</p>
     <h1>Homework 3: PathTracer Write-Up</h1>
     <div class="header-links">
-      <span class="header-link-label">Website URL: <a href="TODO">TODO</a></span>
+		<span class="header-link-label">Writeup webpage: <a href="https://cal-cs184-student.github.io/Rudraksh/">https://cal-cs184-student.github.io/Rudraksh/</a></span>
+		<span class="header-link-label">GitHub: <a href="https://github.com/cal-cs184-student/hw3-pathtracer-ddynkkrhppppp">https://github.com/cal-cs184-student/hw3-pathtracer-ddynkkrhppppp</a></span>
     </div>
   </header>
 
@@ -381,13 +382,12 @@
 
   <!-- ============================================================ -->
   <div class="section-tag">Part 1</div>
-  <h2 id="part1">Part 1: Ray Generation and Scene Intersection (17 Points)</h2>
+  <h2 id="part1">Ray Generation and Scene Intersection</h2>
   <!-- ============================================================ -->
 
   <h3>Task 1: Generating Camera Rays</h3>
   <p>
-    The first step is mapping a normalized image-space coordinate \((x, y) \in [0,1]^2\)
-    to a ray in world space. The virtual camera sits at the origin of camera space and
+    The virtual camera sits at the origin of camera space and
     looks along the \(-Z\) axis. A sensor plane lives at \(z = -1\), and its extents
     are determined by the horizontal and vertical field of view:
     \[
@@ -474,11 +474,6 @@
   </p>
 
   <h3>Normal-Shading Renders</h3>
-  <p>
-    With all four tasks complete the renderer visualizes surface normals as RGB colors
-    — a standard debugging view that confirms both ray generation and intersection are
-    working correctly.
-  </p>
 
   <div class="img-grid">
     <div class="cell">
@@ -503,20 +498,20 @@
 
   <!-- ============================================================ -->
   <div class="section-tag">Part 2</div>
-  <h2 id="part2">Part 2: Bounding Volume Hierarchy (20 Points)</h2>
+  <h2 id="part2">Bounding Volume Hierarchy</h2>
   <!-- ============================================================ -->
 
   <h3>Task 1: Constructing the BVH</h3>
   <p>
-    Without acceleration, every ray must be tested against every primitive — O(n) per
-    ray, which makes complex meshes completely infeasible. The BVH organizes primitives
+    Without acceleration, every ray must be tested against every primitive (O(n) per
+    ray), which makes complex meshes completely infeasible. The BVH organizes primitives
     into a binary tree of axis-aligned bounding boxes so that large swaths of geometry
     can be skipped with a single cheap box test, bringing the per-ray cost down to
     O(log n).
   </p>
   <p>
     Construction is recursive. At each call we receive an iterator range
-    <code>[start, end)</code> into the global primitive list:
+    <code>[start, end]</code> into the global primitive list:
   </p>
   <ol>
     <li>
@@ -524,21 +519,21 @@
       <code>BBox</code> over every primitive's bounding box in the range.
     </li>
     <li>
-      <strong>Leaf test:</strong> if the count \(\leq\) <code>max_leaf_size</code> (default 4),
+      If the count \(\leq\) <code>max_leaf_size</code> (default 4),
       create a leaf node, set its <code>start</code> / <code>end</code> iterators, and return.
     </li>
     <li>
-      <strong>Choose a split axis:</strong> build the bounding box of all primitive
+    	Build the bounding box of all primitive's centroids and pick the axis along which it has the largest extent. Splitting the
       centroids and pick the axis along which it has the largest extent. Splitting the
       widest dimension tends to produce compact, balanced subtrees.
     </li>
     <li>
-      <strong>Partition:</strong> compute the average centroid along the chosen axis as the
+    	Compute the average centroid along the chosen axis as the
       split point, then use <code>std::partition</code> to reorder primitives so those
       whose centroid lies below the split go left, the rest go right.
     </li>
     <li>
-      <strong>Infinite-recursion guard:</strong> if all centroids fall on one side
+      If all centroids fall on one side
       (e.g. many coincident primitives), the partition produces an empty half and the
       algorithm would recurse forever. This is caught by checking whether
       <code>mid == start</code> or <code>mid == end</code> and forcing a balanced
@@ -644,7 +639,7 @@
   <p>
     The BVH delivers dramatic speedups across all four scenes, ranging from 182× on maxplanck to
     874× on CBlucy. Without BVH acceleration, every ray must test against every primitive in the
-    scene, giving O(n) intersection cost per ray — for a 480×360 image with tens or hundreds of
+    scene, giving O(n) intersection cost per ray. For a 480×360 image with tens or hundreds of
     thousands of triangles, that cost dominates entirely. With the BVH, each ray descends the tree
     and prunes entire subtrees the moment their bounding box is missed, reducing the average number
     of primitive tests to roughly O(log n). The larger speedups on CBlucy and dragon compared to
@@ -658,16 +653,15 @@
 
   <!-- ============================================================ -->
   <div class="section-tag">Part 3</div>
-  <h2 id="part3">Part 3: Direct Illumination</h2>
+  <h2 id="part3">Direct Illumination</h2>
   <!-- ============================================================ -->
 
   <h3>Task 1: Diffuse BSDF</h3>
   <p>
-    A Lambertian (perfectly diffuse) surface scatters incoming light equally in all directions across the
-    hemisphere. The BSDF evaluation is simply \( f(\omega_i \to \omega_r) = \frac{\rho}{\pi} \), where
-    \(\rho\) is the albedo (reflectance) of the surface and the \(\pi\) in the denominator comes from
+    The BSDF evaluation is just \( f(\omega_i \to \omega_r) = \frac{\rho}{\pi} \), where
+    \(\rho\) is the reflectance of the surface and \(\pi\) comes from
     normalizing over the hemisphere so energy is conserved. The directions \(\omega_i\) and \(\omega_o\)
-    don't matter for a perfectly diffuse surface — it reflects the same fraction regardless of angle.
+    don't matter for a perfectly diffuse surface (it reflects the same fraction regardless of angle).
     <code>sample_f</code> delegates to the cosine-weighted hemisphere sampler and then calls <code>f</code>.
   </p>
 
@@ -749,17 +743,9 @@
 
   <h3>Analysis: Hemisphere vs. Importance Sampling</h3>
   <p>
-    Uniform hemisphere sampling draws directions randomly across the entire upper hemisphere, so the
-    probability of any given sample actually pointing toward the (relatively small) area light is very low.
-    Most samples contribute zero — they hit a wall or the floor, which are non-emissive — and the
-    estimator wastes the entire sample budget on zero-contribution directions. The result converges
-    correctly in expectation but with very high variance, visible as heavy noise especially in soft shadow
-    regions. Importance sampling sidesteps this by sampling directions directly toward each light source,
-    so every non-occluded sample contributes useful signal. The only noise that remains comes from
-    whether the shadow ray is blocked or not, which is a binary outcome — much lower variance than the
-    hemisphere case. At s=16, l=8 the difference is stark: hemisphere renders look grainy and speckled
-    while importance renders show smooth color and recognizable soft shadows. Both methods are unbiased
-    and converge to the same result, but importance sampling gets there far faster.
+    With uniform hemisphere sampling, directions are picked randomly from the entire upper hemisphere. This means that it’s actually pretty unlikely for any given sample to land on the (relatively small) area light. Most samples end up hitting something non-emissive, like a wall or the floor; those samples don’t contribute any light, so the estimator uses its whole sample budget on a lot of zero-value directions. While this approach technically works in expectation, it leads to very high variance with lots of visible noise, especially in the soft shadow areas.
+
+    Importance sampling addresses this problem. Instead of picking directions randomly, it samples directions that point directly at each light source. As long as there’s no occlusion, every sample contributes useful information. The only randomness that remains comes from whether or not a shadow ray is blocked, which is just a simple yes or no, resulting in much less variance compared to hemisphere sampling. You can really see the improvement: at s=16 and l=8, hemisphere sampling looks grainy and speckled, but importance sampling gives smooth color and recognizable soft shadows. Both methods will eventually converge to the right answer, but importance sampling gets there much faster.
   </p>
 
   <div class="divider"></div>
