@@ -1,109 +1,891 @@
+<!DOCTYPE html>
 <html>
-	<head>
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-		<style>
-			h1 {
-				text-align: center;
-			}
+<head>
+  <script>
+    (function(){var s=localStorage.getItem('theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='dark'||((!s)&&d))document.documentElement.classList.add('dark');})();
+  </script>
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[', '\\]'], ['$$', '$$']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HW4 &mdash; CS184/284A Spring 2026</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-			.container {
-				margin: 0 auto;
-				padding: 60px 20%;
-			}
+    :root {
+      --bg: #f9f9f8;
+      --surface: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #6b6b6b;
+      --text-faint: #9b9b9b;
+      --accent: #2563eb;
+      --accent-light: rgba(37,99,235,0.07);
+      --border: #e5e5e3;
+      --border-strong: #d0d0ce;
+      --code-bg: #f3f3f1;
+      --code-color: #c62a2a;
+      --radius: 8px;
+      --radius-lg: 12px;
+      --btn-bg: #ebebea;
+      --btn-hover: #dededc;
+      --row-alt: #fafaf9;
+      --placeholder-bg: #fffbeb;
+      --placeholder-border: #f59e0b;
+    }
 
-			figure {
-				text-align: center;
-			}
+    html.dark {
+      --bg: #1e1e1e;
+      --surface: #2d2d2d;
+      --text: #ececec;
+      --text-muted: #999999;
+      --text-faint: #666666;
+      --accent: #5b9cf6;
+      --accent-light: rgba(91,156,246,0.1);
+      --border: #3d3d3d;
+      --border-strong: #4d4d4d;
+      --code-bg: #252525;
+      --code-color: #f28b82;
+      --btn-bg: #3a3a3a;
+      --btn-hover: #444444;
+      --row-alt: #333333;
+      --placeholder-bg: #2d2a1e;
+      --placeholder-border: #d97706;
+    }
 
-			img {
-				display: inline-block;
-			}
+    #theme-toggle {
+      position: fixed;
+      top: 18px;
+      right: 20px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      background: var(--btn-bg);
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: background 0.15s, color 0.15s;
+    }
+    #theme-toggle:hover { background: var(--btn-hover); color: var(--text); }
+    #theme-toggle svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .icon-sun  { display: none; }
+    .icon-moon { display: block; }
+    html.dark .icon-sun  { display: block; }
+    html.dark .icon-moon { display: none; }
 
-			body {
-				font-family: 'Inter', sans-serif;
-			}
-		</style>
-	</head>
-	<body>
-		<div class="container">
-		<h1>CS184/284A Spring 2025 Homework 4 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+    html { scroll-behavior: smooth; }
 
-		<br>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
 
-		Link to webpage: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+    .page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 80px 40px 120px;
+    }
 
-		<br>
+    .site-header {
+      margin-bottom: 72px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .site-header .label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .site-header h1 {
+      font-size: 30px;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+    .author {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .header-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .header-link-label { font-size: 13px; color: var(--text-muted); }
+    .header-links a { color: var(--accent); text-decoration: none; }
+    .header-links a:hover { text-decoration: underline; }
 
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      margin-bottom: 64px;
+    }
+    .toc-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .toc ol {
+      list-style: none;
+      counter-reset: toc;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-left: 0;
+    }
+    .toc li { counter-increment: toc; margin-bottom: 0; }
+    .toc a {
+      font-size: 14px;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+    }
+    .toc a::before {
+      content: counter(toc, decimal-leading-zero);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-faint);
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .toc a:hover { color: var(--accent); }
 
-		<figure>
-			<img src="clothsim.png" alt="Cloth draped over sphere" style="width:70%"/>
-			<figcaption>You can add images with captions!</figcaption>
-		</figure>
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-light);
+      padding: 4px 10px;
+      border-radius: 100px;
+      margin-bottom: 12px;
+    }
 
-		<!--
-		We've already added one heading per part, to make your write-up as navigable when grading. Please fit your write-up within these sections!
-		-->
+    .divider { height: 1px; background: var(--border); margin: 64px 0; }
 
-		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
+    h2 {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: var(--text);
+      scroll-margin-top: 32px;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 28px;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    ul, ol { padding-left: 20px; margin-bottom: 14px; }
+    li { margin-bottom: 6px; }
+    li:last-child { margin-bottom: 0; }
 
-		<h2>Part 1: Masses and springs</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    code {
+      font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+      font-size: 12.5px;
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--code-color);
+    }
+    pre {
+      font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+      font-size: 12.5px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      overflow-x: auto;
+      line-height: 1.65;
+      margin: 18px 0;
+      color: var(--text);
+    }
+    pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
 
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
-		<div style="display: flex; flex-direction: column; align-items: center;">
-			<table style="width: 100%; text-align: center; border-collapse: collapse;">
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			</table>
-		</div>
+    figure { margin: 28px 0; text-align: center; }
+    figure img {
+      max-width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: inline-block;
+    }
+    figcaption {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
 
-		<h2>Part 2: Simulation via numerical integration</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    .img-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 28px 0;
+    }
+    .img-grid .cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+    }
+    .img-grid .cell img {
+      width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: block;
+    }
+    .img-grid .cell figcaption {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
 
-		<h2>Part 3: Handling collisions with other objects</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
 
-		<h2>Part 4: Handling self-collisions</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    .timing-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 14px;
+    }
+    .timing-table th {
+      background: var(--row-alt);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .timing-table td {
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+    }
+    .timing-table tr:nth-child(even) td { background: var(--row-alt); }
 
-		<h2>Part 5: Shaders</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    /* Screenshot placeholder styling */
+    .placeholder {
+      background: var(--placeholder-bg);
+      border: 2px dashed var(--placeholder-border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin: 20px 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .placeholder strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+    .placeholder ul { margin-top: 8px; margin-bottom: 0; }
 
-		<h2>(Optional) Part 6: Extra Credit - Additional cloth simulation features!</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-		
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
-		</div>
-	</body>
+    @media (max-width: 600px) {
+      .page { padding: 48px 20px 80px; }
+      .img-grid { grid-template-columns: 1fr; }
+      h2 { font-size: 19px; }
+      .site-header h1 { font-size: 24px; }
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var btn = document.getElementById('theme-toggle');
+      btn.addEventListener('click', function() {
+        var isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
+    });
+  </script>
+</head>
+<body>
+
+<button id="theme-toggle" aria-label="Toggle dark mode">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"/>
+    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+</button>
+
+<div class="page">
+
+  <!-- Header -->
+  <header class="site-header">
+    <p class="label">Rudraksh Awasthi &middot; Idhant Gulati &middot; CS184/284A &middot; Spring 2026</p>
+    <h1>Homework 4: Cloth Simulation Write-Up</h1>
+    <div class="header-links">
+      <span class="header-link-label">Writeup webpage: <a href="https://cal-cs184-student.github.io/Rudraksh/">https://cal-cs184-student.github.io/Rudraksh/</a></span>
+      <span class="header-link-label">GitHub: <a href="https://github.com/cal-cs184-student/hw4-clothsim-bkpdbobcl">https://github.com/cal-cs184-student/hw4-clothsim-bkpdbobcl</a></span>
+    </div>
+  </header>
+
+  <!-- TOC -->
+  <nav class="toc">
+    <p class="toc-title">Contents</p>
+    <ol>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#part1">Masses and Springs</a></li>
+      <li><a href="#part2">Simulation via Numerical Integration</a></li>
+      <li><a href="#part3">Handling Collisions with Other Objects</a></li>
+      <li><a href="#part4">Handling Self-Collisions</a></li>
+      <li><a href="#extra">Extra Credit</a></li>
+      <li><a href="#part5">Shaders</a></li>
+    </ol>
+  </nav>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Overview</div>
+  <h2 id="overview">Overview</h2>
+  <!-- ============================================================ -->
+
+  <p>
+    This assignment had me build a cloth simulator from the ground up. The cloth is modeled as a grid
+    of point masses hooked together by three types of springs: structural ones between direct neighbors,
+    shearing ones along the diagonals, and bending ones that skip a neighbor: so each spring type
+    resists a different kind of deformation. To move everything forward in time I used damped Verlet
+    integration, which is nice because velocity is implicit (just the difference between current and
+    previous position), and then clamped every spring to at most 110% of its rest length each step to
+    keep things from stretching unrealistically.
+  </p>
+  <p>
+    Getting collisions right was the most iterative part. For the sphere and plane I project any point
+    mass that pokes through back onto the surface and apply friction. Self-collisions were trickier  
+    I ended up using a spatial hash that buckets point masses into a 3D grid each timestep so only
+    nearby masses are ever compared against each other. For extra credit I also built a BVH on top of
+    the point masses to handle the case where cloth bunches into a small region and the spatial hash
+    buckets become overcrowded.
+  </p>
+  <p>
+    The shader work was probably my favorite part. Going through Blinn-Phong, then texture mapping,
+    then bump and displacement mapping really made the vertex/fragment split click for me: the moment
+    I realized bump mapping can never affect silhouettes (because only normals change, not positions)
+    while displacement can was a satisfying "aha." I also did wind (a travelling-wave force), an AABB
+    box collision primitive, and interactive keyboard-driven object movement as extra credit.
+  </p>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Part 1</div>
+  <h2 id="part1">Masses and Springs</h2>
+  <!-- ============================================================ -->
+
+  <p>
+    <code>Cloth::buildGrid()</code> builds everything in two passes: first all the point masses,
+    then all the springs. Doing it in two passes matters because the spring constructors take
+    raw pointers into the <code>point_masses</code> vector, so all masses need to exist first.
+  </p>
+  <p>
+    Point masses are laid out row-major (x inside y). World position is just
+    \(p_x = x \cdot \frac{\text{width}}{n_w - 1}\) and \(p_y = y \cdot \frac{\text{height}}{n_h - 1}\).
+    For a <code>HORIZONTAL</code> cloth, \(y\) is fixed at 1 and the cloth lies in the xz-plane.
+    For a <code>VERTICAL</code> cloth, a tiny random z-offset (uniform in \(\left[-\tfrac{1}{1000}, \tfrac{1}{1000}\right]\))
+    breaks the symmetry so it doesn't fall perfectly flat. Pinned masses are flagged by checking their
+    \((x, y)\) index against the scene file's <code>pinned</code> list.
+  </p>
+  <p>
+    Springs are added by walking each mass and connecting it to its already-enumerated neighbors:
+  </p>
+  <ul>
+    <li><strong>Structural</strong>: left neighbor \((x-1,\, y)\) and above \((x,\, y-1)\).</li>
+    <li><strong>Shearing</strong>: upper-left \((x-1,\, y-1)\) and upper-right \((x+1,\, y-1)\).</li>
+    <li><strong>Bending</strong>: two steps left \((x-2,\, y)\) and two steps above \((x,\, y-2)\).</li>
+  </ul>
+  <p>Out-of-bounds neighbors are just skipped, which handles all the edge cases cleanly.</p>
+
+  <h3>Wireframe: pinned2.json</h3>
+
+  <figure>
+    <img src="../docs/images/P1S1.png" alt="Screenshot: pinned2.json wireframe" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>pinned2.json wireframe: full spring lattice with two corners pinned</figcaption>
+  </figure>
+
+  <h3>Constraint Variations</h3>
+
+  <figure>
+    <img src="../docs/images/P1S2.png" alt="Screenshot: no shearing constraints" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>No shearing: only axis-aligned structural and bending springs</figcaption>
+  </figure>
+
+  <figure>
+    <img src="../docs/images/P1S3.png" alt="Screenshot: shearing constraints only" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>Shearing only: diagonal X-pattern across each cell</figcaption>
+  </figure>
+
+  <figure>
+    <img src="../docs/images/P1S4.png" alt="Screenshot: all constraints enabled" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>All constraints: full lattice of structural, shearing, and bending springs</figcaption>
+  </figure>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Part 2</div>
+  <h2 id="part2">Simulation via Numerical Integration</h2>
+  <!-- ============================================================ -->
+
+  <p>
+    Each timestep in <code>Cloth::simulate()</code> runs three stages back to back.
+  </p>
+  <p>
+    <strong>Forces.</strong> All <code>pm.forces</code> are cleared, then external accelerations are
+    summed into a single force \(\mathbf{F}_\text{ext} = m \sum \mathbf{a}_i\) and broadcast to every
+    mass. Then Hooke's law is applied to every enabled spring:
+    \[ F_s = k_s \left(\|\mathbf{p}_a - \mathbf{p}_b\| - l\right) \]
+    Bending springs use \(0.2 \cdot k_s\) so they're deliberately weaker: they only prevent large-scale
+    bending without fighting the cloth's natural drape.
+  </p>
+  <p>
+    <strong>Verlet integration.</strong> Positions are updated with the damped Verlet formula:
+    \[ \mathbf{x}_{t+dt} = \mathbf{x}_t + (1 - d)(\mathbf{x}_t - \mathbf{x}_{t-dt}) + \mathbf{a}\, dt^2 \]
+    where \(d = \texttt{damping}/100\). Velocity is implicit here: it's just the position difference
+    from the previous step, scaled down by \((1-d)\) each frame to bleed off energy.
+    Pinned masses are skipped entirely.
+  </p>
+  <p>
+    <strong>Provot constraint.</strong> After integration, any spring stretched beyond
+    \(1.1 \times \texttt{rest\_length}\) gets corrected — both endpoints are nudged inward by half
+    the excess. If one end is pinned, the free end absorbs the whole correction; if both are pinned,
+    nothing moves.
+  </p>
+
+  <h3>Effect of Spring Constant <code>ks</code></h3>
+
+  <p>
+    At very low \(k_s\) (~50 N/m) the springs barely resist stretching, so the cloth hangs
+    in a deep droop and ripples around a lot before finally settling. Crank it up to ~50000 N/m and
+    the cloth is stiff enough that it hangs almost flat between the two pinned corners — it barely
+    sags at all and settles almost immediately.
+  </p>
+
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../docs/images/P2S1_ks50.png" alt="Screenshot: pinned2.json, ks = 50" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+      <figcaption>pinned2.json, ks = 50: weak springs, deep central droop</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../docs/images/P2S2_ks50000.png" alt="Screenshot: pinned2.json, ks = 50000" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+      <figcaption>pinned2.json, ks = 50000: stiff springs, cloth hangs nearly flat</figcaption>
+    </div>
+  </div>
+
+  <h3>Effect of Density</h3>
+
+  <p>
+    Low density (~1 g/cm\(^2\)) makes the cloth feel nearly weightless — gravity can't pull it far and it
+    hangs with just a gentle sag. High density (~150 g/cm\(^2\)) and the cloth is heavy enough to droop
+    deeply, looking a lot like the low-\(k_s\) case. That makes sense: both reduce the ratio of
+    spring stiffness to gravitational load.
+  </p>
+
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../docs/images/P2S3_d1.png" alt="Screenshot: pinned2.json, density = 1 g/cm²" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+      <figcaption>pinned2.json, density = 1 g/cm²: lightweight cloth, shallow sag</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../docs/images/P2S4_d150.png" alt="Screenshot: pinned2.json, density = 150 g/cm²" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+      <figcaption>pinned2.json, density = 150 g/cm²: heavy cloth, deep droop similar to low ks</figcaption>
+    </div>
+  </div>
+
+  <h3>Effect of Damping</h3>
+
+  <p>
+    With near-zero damping the cloth swings wildly past its rest position and keeps going: energy isn't
+    being bled off, so it just oscillates and ripples for a very long time. Crank damping up to ~1% and the
+    cloth falls in one slow, smooth motion straight to its rest state with no bouncing at all. It almost
+    looks like it's moving through syrup.
+  </p>
+
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../docs/images/P2S5_damp0.png" alt="Screenshot: pinned2.json, damping ≈ 0%" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+        <strong>Screenshot: pinned2.json, damping ≈ 0%</strong><br>
+      <figcaption>pinned2.json, damping ≈ 0%: cloth mid-swing, oscillating past rest position</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../docs/images/P2S6_damp1.png" alt="Screenshot: pinned2.json, damping = 1%" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+        <strong>Screenshot: pinned2.json, damping = 1%</strong><br>
+      <figcaption>pinned2.json, damping = 1%: slow smooth descent, no oscillation</figcaption>
+    </div>
+  </div>
+
+  <h3>Final Resting State: pinned4.json</h3>
+
+  <figure>
+    <img src="../docs/images/P2S7.png" alt="Screenshot: pinned4.json at rest, default parameters" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>pinned4.json at rest: all four corners pinned, symmetric central droop (density=15, ks=5000, damping=0.2%)</figcaption>
+  </figure>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Part 3</div>
+  <h2 id="part3">Handling Collisions with Other Objects</h2>
+  <!-- ============================================================ -->
+
+  <p>
+    Both collision types share the same basic idea: figure out if a point mass has crossed into the
+    object, find the point on the surface it should have landed on, and push it back there: with
+    friction scaling down how much of the tangential correction actually sticks.
+    The collision loop runs after Verlet integration each step, testing every point mass against every
+    collision object.
+  </p>
+
+  <p>
+    <strong>Sphere.</strong> A point mass is inside the sphere when
+    \(\|\mathbf{p} - \mathbf{o}\|^2 < r^2\). The tangent point is where the ray from the sphere's
+    center through the current position hits the surface:
+    \(\mathbf{t} = \mathbf{o} + r \cdot \hat{(\mathbf{p} - \mathbf{o})}\).
+    The correction is \(\mathbf{t} - \mathbf{p}_\text{last}\) scaled by \((1 - f)\).
+  </p>
+
+  <p>
+    <strong>Plane.</strong> A crossing is detected by checking whether the signed distances of the
+    current and last positions from the plane flip sign (i.e., the mass passed through).
+    The tangent point is the ray-plane intersection, then nudged slightly above the surface by
+    <code>SURFACE_OFFSET</code> so the cloth doesn't z-fight with the plane. Friction is applied the
+    same way.
+  </p>
+
+  <h3>Sphere: varying <code>ks</code></h3>
+
+  <p>
+    At \(k_s = 500\) the cloth is super compliant — it wraps tightly around the sphere and its
+    sides hang all the way down, nearly reaching the ground. The default \(k_s = 5000\) gives
+    a natural drape with nice folds fanning out from the sphere's equator. At \(k_s = 50000\)
+    the cloth fights bending hard enough that it forms a wide tent shape sitting on top of the sphere,
+    with just a few broad folds sticking out horizontally rather than hanging down.
+  </p>
+
+  <figure>
+    <img src="../docs/images/P3S1.png" alt="Screenshot: sphere.json at rest, ks = 500" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>sphere.json, ks = 500: cloth conforms tightly, sides hang low</figcaption>
+  </figure>
+  <figure>
+    <img src="../docs/images/P3S2.png" alt="Screenshot: sphere.json at rest, ks = 5000 (default)" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>sphere.json, ks = 5000 (default): natural drape with radiating folds</figcaption>
+  </figure>
+  <figure>
+    <img src="../docs/images/P3S3.png" alt="Screenshot: sphere.json at rest, ks = 50000" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>sphere.json, ks = 50000: stiff tent shape, folds stick out horizontally</figcaption>
+  </figure>
+
+  <h3>Plane</h3>
+
+  <figure>
+    <img src="../docs/images/P3S4.png" alt="Screenshot: plane.json at rest" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>plane.json at rest: cloth lying flat on the plane, no clipping</figcaption>
+  </figure>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Part 4</div>
+  <h2 id="part4">Handling Self-Collisions</h2>
+  <!-- ============================================================ -->
+
+  <p>
+    The idea behind self-collision is that testing every mass against every other mass is \(O(n^2)\) and
+    way too slow, so instead we bucket masses into a 3D spatial hash each frame and only test pairs
+    that land in the same bucket.
+  </p>
+  <p>
+    <strong><code>hash_position</code></strong> divides space into boxes of size
+    \(w \times h \times t\), where \(w = 3\,\text{width}/n_w\), \(h = 3\,\text{height}/n_h\),
+    and \(t = \max(w, h)\). Each position is floored to its box's origin, then hashed to a float key via
+    \(b_x \cdot 31 + b_y \cdot 97 + b_z \cdot 7919\). The different primes in each dimension reduce
+    the chance of two different boxes mapping to the same key.
+  </p>
+  <p>
+    <strong><code>build_spatial_map</code></strong> wipes the previous frame's map and rebuilds it
+    from scratch: hash every mass, append it to its bucket, allocate a new bucket vector on the first
+    visit to each key.
+  </p>
+  <p>
+    <strong><code>self_collide</code></strong> grabs the bucket for the given mass and checks each
+    neighbor in it. If two masses are closer than \(2 \times \text{thickness}\), we accumulate a
+    correction that would push them exactly that far apart. The average over all such neighbors is
+    divided by <code>simulation_steps</code> to spread the correction out smoothly instead of
+    snapping masses around.
+  </p>
+
+  <h3>Cloth Falling on Itself</h3>
+
+  <figure>
+    <img src="../docs/images/P4S1.png" alt="Screenshot: selfCollision.json: early fall (first folds)" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>selfCollision.json: early contact, first folds forming at the bottom</figcaption>
+  </figure>
+  <figure>
+    <img src="../docs/images/P4S2.png" alt="Screenshot: selfCollision.json: mid-fall (multiple layers)" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>selfCollision.json: mid-fall, several stacked layers visible</figcaption>
+  </figure>
+  <figure>
+    <img src="../docs/images/P4S3.png" alt="Screenshot: selfCollision.json: settled (final heap)" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>selfCollision.json: settled heap, cloth at near-rest on the plane</figcaption>
+  </figure>
+
+  <h3>Effect of Density</h3>
+
+  <p>
+    Light cloth (~1 g/cm\(^2\)) falls slowly and gently, spreading into wide open folds that drape across
+    a large floor area. Heavy cloth (~50 g/cm\(^2\)) crashes down faster and packs itself into a tight,
+    compact pile — the extra momentum drives the folds in on themselves rather than letting them fan out.
+  </p>
+
+  <figure>
+      <img src="../docs/images/P4S4.png" alt="Screenshot: selfCollision.json, density = 1 g/cm²" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+      <figcaption>selfCollision.json, density = 1 g/cm²: wide open folds, spreads across floor</figcaption>
+      <img src="../docs/images/P4S5.png" alt="Screenshot: selfCollision.json, density = 50 g/cm²" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+      <figcaption>selfCollision.json, density = 50 g/cm²: compact crumpled pile, smaller footprint</figcaption>
+  </figure>
+
+  <h3>Effect of <code>ks</code></h3>
+
+  <p>
+    Low \(k_s\) (~500 N/m) gives a very limp cloth that crumples into lots of small tight
+    wrinkles when it folds on itself — it can't resist sharp bends at all. High \(k_s\)
+    (~50000 N/m) and the cloth acts more like a thick blanket: it forms a few large, gently curving
+    folds rather than crumpling, because the springs push back hard against any sharp bending.
+  </p>
+
+  <figure>  
+    <img src="../docs/images/P4S6.png" alt="Screenshot: selfCollision.json, ks = 500" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>selfCollision.json, ks = 500: limp cloth, many small tight wrinkles</figcaption>
+  </figure>
+  <figure>
+    <img src="../docs/images/P4S7.png" alt="Screenshot: selfCollision.json, ks = 50000" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>selfCollision.json, ks = 50000: stiff cloth, few large smooth curves</figcaption>
+  </figure>
+
+  <div class="divider"></div>
+
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Part 5</div>
+  <h2 id="part5">Shaders</h2>
+  <!-- ============================================================ -->
+
+  <p>
+    A shader program is really two programs chained together. The <strong>vertex shader</strong> runs
+    once per vertex and handles all the geometry work: transforming positions and normals into the
+    right coordinate space and passing attributes like UVs and tangents along as <em>varyings</em>.
+    The <strong>fragment shader</strong> runs once per rasterized pixel on the triangles the GPU builds
+    from those vertices. By the time it fires, the varyings have been smoothly interpolated across the
+    triangle by the hardware, so the fragment shader just reads them and figures out what color to write.
+    Splitting the work this way means the expensive per-pixel lighting math runs at full screen resolution
+    while the heavier geometry transforms only run at vertex count.
+  </p>
+
+  <h3>Blinn-Phong Shading Model</h3>
+
+  <p>
+    Blinn-Phong breaks lighting into three additive pieces:
+  </p>
+  <ul>
+    <li><strong>Ambient</strong> \( k_a I_a \) — a flat, direction-independent fill so nothing ever
+    goes completely black. I used \(k_a = 0.1\), \(I_a = (1,1,1)\).</li>
+    <li><strong>Diffuse</strong> \( k_d \frac{I}{r^2} \max(0, \hat{\mathbf{n}} \cdot \hat{\mathbf{l}}) \) —
+    Lambertian shading. How brightly a surface is lit depends only on the angle between the normal
+    and the light direction, and intensity falls off with \(r^2\).</li>
+    <li><strong>Specular</strong> \( k_s \frac{I}{r^2} \max(0, \hat{\mathbf{n}} \cdot \hat{\mathbf{h}})^p \) —
+    the glossy highlight. Instead of the true reflection vector, Blinn's trick is to use the
+    half-vector \(\hat{\mathbf{h}} = \text{normalize}(\hat{\mathbf{l}} + \hat{\mathbf{v}})\),
+    which avoids an artifact where the highlight disappears when the camera is past 90° from
+    the reflection direction. The exponent \(p = 64\) controls how tight the highlight is.</li>
+  </ul>
+
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../docs/images/P5S1.png" alt="Screenshot: Blinn-Phong, ambient only" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+
+      <figcaption>Ambient only (kd = ks = 0): uniform flat fill</figcaption>
+    </div>
+    <div class="cell">  
+      <img src="../docs/images/P5S2.png" alt="Screenshot: Blinn-Phong, diffuse only" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+      <figcaption>Diffuse only (ka = ks = 0): brightness follows surface angle to light</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../docs/images/P5S3.png" alt="Screenshot: Blinn-Phong, specular only" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+      <figcaption>Specular only (ka = kd = 0): glossy highlight at half-vector</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../docs/images/P5S4.png" alt="Screenshot: full Blinn-Phong (all components)" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+      <figcaption>Full Blinn-Phong: ambient + diffuse + specular combined</figcaption>
+    </div>
+  </div>
+
+  <h3>Texture Mapping</h3>
+
+  <p>
+    <code>Texture.frag</code> just samples <code>u_texture_1</code> at the interpolated UV and outputs
+    that color directly: no lighting, no normals, nothing else. Whatever the texture looks like is
+    exactly what you get on screen, stretched according to the mesh's UV layout.
+  </p>
+
+  <figure>
+    <img src="../docs/images/P5S5.png" alt="Screenshot: sphere.json, texture shader" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+    <figcaption>sphere.json: texture mapping, UV-mapped color with no lighting computation</figcaption>
+  </figure>
+
+  <h3>Bump Mapping</h3>
+
+  <p>
+    Bump mapping fakes surface detail by tilting the shading normal based on a height map —
+    no geometry actually moves. The idea is to build a local TBN frame (tangent, bitangent, normal)
+    at each pixel, estimate the height map's gradient with finite differences:
+    \[
+      dU = \bigl(h(u + \tfrac{1}{W},\, v) - h(u,v)\bigr)\, k_h\, k_n, \qquad
+      dV = \bigl(h(u,\, v + \tfrac{1}{H}) - h(u,v)\bigr)\, k_h\, k_n
+    \]
+    then assemble a local perturbed normal \(\mathbf{n}_o = (-dU,\; -dV,\; 1)\) and rotate it
+    into world space with the TBN matrix. Blinn-Phong shading then runs with this perturbed normal
+    instead of the geometric one, giving the illusion of surface relief.
+    The texture used for both bump and displacement is <code>texture_3.png</code> (not
+    <code>texture_2.png</code>).
+  </p>
+
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../docs/images/P5S6.png" alt="Screenshot: bump mapping on cloth (sphere.json, texture_3.png)" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+        <strong>Screenshot: bump mapping on cloth (sphere.json, texture_3.png)</strong><br>
+      <figcaption>Bump mapping on cloth (texture_3.png): surface detail without geometry change</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../docs/images/P5S7.png" alt="Screenshot: bump mapping on sphere (sphere.json, texture_3.png)" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+        <strong>Screenshot: bump mapping on sphere (sphere.json, texture_3.png)</strong><br>
+      <figcaption>Bump mapping on sphere (texture_3.png): smooth silhouette, detail in shading only</figcaption>
+    </div>
+  </div>
+
+  <h3>Bump vs. Displacement: Effect of Mesh Coarseness</h3>
+
+  <p>
+    This comparison really drives home what's different about the two techniques. The sphere is
+    tessellated at two levels: coarse (<code>-o 16 -a 16</code>, ~500 triangles) and fine
+    (<code>-o 128 -a 128</code>, ~32,000 triangles).
+  </p>
+
+  <p>
+    With <strong>bump mapping</strong>, the coarseness of the mesh barely matters for the silhouette.
+    Since no vertices move, the outline of the sphere is always determined by the underlying geometry.
+    At \(16 \times 16\) you can see the faceted polygon edges at the silhouette, but that's the base geometry
+    showing through, not the bump map. The bump detail on the surface interior looks similar at both
+    resolutions, though slightly crisper at \(128 \times 128\) because the TBN frame is built from more accurate
+    interpolated normals.
+  </p>
+
+  <p>
+    With <strong>displacement mapping</strong>, mesh resolution matters a lot. At \(16 \times 16\) each triangle
+    is huge and the height-map displacement of each vertex creates big blocky protrusions — the
+    silhouette looks like a spiky low-poly mesh. At \(128 \times 128\) there are enough vertices to track the
+    height-map variation faithfully, and the silhouette becomes genuinely rough in a way that looks
+    realistic. This is the key takeaway: <em>bump mapping's silhouette is always smooth regardless of
+    mesh density; displacement mapping needs enough vertices to actually represent the detail.</em>
+  </p>
+
+  <div class="img-grid">
+    <div class="cell">
+        <img src="../docs/images/P5S8.png" alt="Screenshot: bump mapping, sphere -o 16 -a 16 (coarse)" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+      <figcaption>Bump, sphere -o 16 -a 16: silhouette smooth despite coarse geometry</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../docs/images/P5S9.png" alt="Screenshot: bump mapping, sphere -o 128 -a 128 (fine)" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+      <figcaption>Bump, sphere -o 128 -a 128: silhouette still smooth, crisper interior detail</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../docs/images/P5S10.png" alt="Screenshot: displacement mapping, sphere -o 16 -a 16 (coarse)" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+        <strong>Screenshot: displacement mapping, sphere -o 16 -a 16 (coarse)</strong><br>
+      <figcaption>Displacement, sphere -o 16 -a 16: blocky protrusions visible on silhouette</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../docs/images/P5S11.png" alt="Screenshot: displacement mapping, sphere -o 128 -a 128 (fine)" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+        <strong>Screenshot: displacement mapping, sphere -o 128 -a 128 (fine)</strong><br>
+      <figcaption>Displacement, sphere -o 128 -a 128: organically rough silhouette at high resolution</figcaption>
+    </div>
+  </div>
+
+  <h3>Displacement Mapping</h3>
+
+  <p>
+    Displacement mapping takes bump one step further — <code>Displacement.vert</code> actually pushes
+    each vertex outward along its normal by \(h(\mathbf{uv}) \cdot k_h\) before projection, so the
+    geometry itself is physically deformed. <code>Displacement.frag</code> then runs the same
+    bump-normal calculation on top of that to shade the displaced surface.
+    The screenshots at the two resolutions above show the result.
+  </p>
+
+  <h3>Mirror Shading (Environment Map Reflection)</h3>
+
+  <p>
+    The mirror shader treats the surface as a perfect reflector. It computes the eye ray from the camera
+    to the surface point, reflects it around the surface normal, and uses that reflected direction to
+    sample the environment cubemap: whatever is "behind" the camera in that direction is what you see
+    on the surface. There's no lighting computation at all; the entire output is just the cubemap lookup.
+  </p>
+
+  <div class="img-grid">
+    <div class="cell">
+      <img src="../docs/images/P5S12.png" alt="Screenshot: mirror shader on cloth (sphere.json)" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+      <figcaption>Mirror shader on cloth: environment map reflected across draped cloth</figcaption>
+    </div>
+    <div class="cell">
+      <img src="../docs/images/P5S13.png" alt="Screenshot: mirror shader on sphere (sphere.json)" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">
+      <figcaption>Mirror shader on sphere: cubemap panorama reflected around sphere surface</figcaption>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+</div><!-- .page -->
+
+</body>
 </html>
