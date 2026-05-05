@@ -375,9 +375,10 @@
   <header class="site-header">
     <p class="label">Ahan Singhal &nbsp;&middot;&nbsp; Shanta Joshi &nbsp;&middot;&nbsp; Rudraksh Awasthi &nbsp;&middot;&nbsp; CS184/284A &nbsp;&middot;&nbsp; Spring 2026</p>
     <h1>CartoonForge: Real-Time Non-Photorealistic Rendering</h1>
-    <p class="subtitle">Raymarching, cel shading, procedural edge detection, and five switchable stylization presets — all in the browser, in a single GLSL fragment shader.</p>
+    <p class="subtitle">Raymarching &nbsp;&middot;&nbsp; Cel shading &nbsp;&middot;&nbsp; Edge detection</p>
     <div class="header-links">
       <span class="link-label">Repository: <a href="https://github.com/cal-cs184-student/cartoonforge">github.com/cal-cs184-student/cartoonforge</a></span>
+      <span class="link-label">Report webpage: <a href="https://cal-cs184-student.github.io/Rudraksh/final">https://cal-cs184-student.github.io/Rudraksh/final</a></span>
       <span class="link-label">Video: <a href="https://drive.google.com/drive/folders/1mwkda9ihOplw2DQoZfo_RRv_enVXhUUC?usp=sharing">drive.google.com/…/cartoonforge-video</a></span>
       <span class="link-label">Slides: <a href="https://docs.google.com/presentation/d/1TMaoZek11454vSE2GWNuZ3jtEJH5n4yZHeMxiaJTtEM/edit?usp=sharing">docs.google.com/…/cartoonforge-slides</a></span>
     </div>
@@ -402,23 +403,16 @@
 
   <p>
     CartoonForge is a real-time non-photorealistic renderer that runs entirely in the browser as a
-    single WebGL fragment shader. The entire scene — geometry, lighting, shading, and stylization —
-    is computed per-pixel using raymarching over Signed Distance Functions (SDFs). There are no meshes,
+    single WebGL fragment shader. The entire scene is computed per-pixel using raymarching over Signed Distance Functions (SDFs). There are no meshes,
     no rasterization pipeline, and no texture lookups: every visual element is procedural.
   </p>
   <p>
-    The renderer produces five distinct stylization modes — Classic Anime, Comic Book, Ink Sketch,
-    Flat Cel, and Pencil Sketch — all switchable at runtime without shader recompilation. It includes
-    a full orbit camera, multiple scenes, cel-quantized diffuse lighting, screen-space edge detection,
-    living-ink outline animation, halftone shadow stippling, and a hand-drawn pencil stroke effect
+    The renderer produces five distinct stylization modes. All of these are switchable at runtime without shader recompilation. It includes
+    a full orbit camera, multiple scenes, cel-quantized diffuse lighting, screen-space edge detection, halftone shadow stippling, and a hand-drawn pencil stroke effect
     using spatially jittered edge samples.
   </p>
 
-  <div class="img-placeholder">
-    <div class="img-label">Hero image</div>
-    <div class="img-desc">Full-screen screenshot of the Campanile scene (scene_002) in Classic Anime mode — best angle showing the tower, trees, and sky together. Landscape orientation.</div>
-    <div class="img-dim">Suggested: 1600 × 900 px</div>
-  </div>
+  <img src="images/MAIN.png" width="100%" height="auto">
 
   <div class="divider"></div>
 
@@ -429,7 +423,7 @@
 
   <h3>Starting Point</h3>
   <p>
-    We started from scratch with no starter code. The initial commit was an empty repository. All
+    We started from scratch with no starter code. All
     GLSL, the browser harness, and tooling were written during the project. We referenced Inigo
     Quilez's SDF function library for primitive formulas (sphere, box, torus, cylinder) and his
     articles on raymarching; the actual GLSL implementation, pipeline architecture, stylization
@@ -438,9 +432,7 @@
 
   <h3>The Raymarching Pipeline</h3>
   <p>
-    Raymarching (sphere tracing) works by firing one ray per pixel from the camera, then stepping
-    along the ray in increments equal to the minimum distance to any surface in the scene. When the
-    accumulated distance falls below a small epsilon, the ray has hit a surface. The scene is defined
+    The scene is defined
     by a single function <code>sceneSDF(vec3 p)</code> that returns a
     <code>vec2(distance, materialID)</code> pair for any point in space.
   </p>
@@ -467,36 +459,27 @@
 
   <h4>SDF Primitives and CSG</h4>
   <p>
-    All geometry is built from a shared library of SDF primitives in <code>reference/sdf_primitives.glsl</code>:
-    sphere, box, plane, cylinder, and torus. Scenes compose objects using CSG operators:
+    All geometry is built from a shared library of SDF primitives in <code>reference/sdf_primitives.glsl</code>.
+    Scenes compose objects using CSG operators:
     <code>opUnion</code>, <code>opSmoothUnion</code> (smooth blending), <code>opSubtract</code>,
-    and <code>opIntersect</code>. The Campanile scene (scene_002) uses a tapered box for the shaft,
-    round-box cutouts approximating arched belfry windows, a pyramid-approximated copper cap, and
-    groups of sphere CSG for the Marin hills silhouette.
+    and <code>opIntersect</code>.
   </p>
 
   <h4>Surface Normals</h4>
   <p>
-    Normals are computed via the <strong>tetrahedron method</strong> — four SDF evaluations at
-    tetrahedral offsets rather than the six required by central differences. This gives slightly
+    Normals are computed via the <strong>tetrahedron method</strong>. This gives slightly
     better accuracy and saves two SDF calls per pixel, which matters when <code>sceneSDF</code>
-    is expensive (Campanile evaluates ~30 SDF primitives per call).
+    is expensive.
   </p>
 
   <h4>Camera System</h4>
   <p>
-    The camera is a spherical-coordinate orbit: azimuth, elevation, and radius are maintained by
-    the JavaScript harness and passed to the shader as <code>uniform vec3 iCamera</code> each frame.
-    The shader converts to Cartesian coordinates and builds a look-at basis matrix.
+    The camera is a spherical-coordinate orbit. The shader converts to Cartesian coordinates and builds a look-at basis matrix.
     Mouse drag, trackpad pinch, WASD/arrow keys, and Q/E zoom are all handled in JS so the shader
-    itself is stateless. A barrel-distortion lens warp (optional) adds a slight cartoon fisheye feel.
+    itself is stateless.
   </p>
 
-  <div class="img-placeholder">
-    <div class="img-label">Camera controls diagram</div>
-    <div class="img-desc">Annotated screenshot or diagram showing the orbit controls — azimuth/elevation axes, zoom direction. Can be a simple labeled sphere with arrows.</div>
-    <div class="img-dim">Suggested: 800 × 500 px</div>
-  </div>
+
 
   <h3>Cel Shading</h3>
   <p>
@@ -514,13 +497,13 @@
   </p>
 
   <div class="img-grid-2">
-    <div class="img-placeholder">
-      <div class="img-label">Cel shading — smooth</div>
-      <div class="img-desc">The same object rendered with raw smooth Lambertian diffuse (no quantization) for comparison.</div>
+    <div>
+      <img src="images/Cel_smooth.png" alt="Cel shading — smooth" style="width:100%; border-radius:8px;">
+      <div class="img-label" style="text-align:center;">Cel shading — smooth</div>
     </div>
-    <div class="img-placeholder">
-      <div class="img-label">Cel shading — quantized</div>
-      <div class="img-desc">The same object with 4-band cel quantization active — visible discrete shading bands.</div>
+    <div>
+      <img src="images/Cel_quantized.png" alt="Cel shading — quantized" style="width:100%; border-radius:8px;">
+      <div class="img-label" style="text-align:center;">Cel shading — quantized</div>
     </div>
   </div>
 
@@ -543,35 +526,17 @@
   </p>
 
   <div class="img-grid-2">
-    <div class="img-placeholder">
-      <div class="img-label">Edge detection — silhouette only</div>
-      <div class="img-desc">Visualization showing only the silhouette edges (depth-miss path) in white on black.</div>
+    <div>
+      <img src="images/Silhouette_only.png" alt="Edge detection — silhouette only" style="width:100%; border-radius:8px;">
+      <div class="img-label" style="text-align:center;">Silhouette only</div>
     </div>
-    <div class="img-placeholder">
-      <div class="img-label">Edge detection — full (silhouette + crease)</div>
-      <div class="img-desc">Combined edge map: silhouette + depth discontinuity + normal divergence. Shows creases on the belfry arches.</div>
+    <div>
+      <img src="images/Silhouette_Crease.png" alt="Edge detection — silhouette + creases" style="width:100%; border-radius:8px;">
+      <div class="img-label" style="text-align:center;">Silhouette + creases</div>
     </div>
   </div>
 
-  <h3>Living-Ink Outline Animation</h3>
-  <p>
-    Rather than applying a hard threshold to the edge magnitude, the threshold is perturbed each
-    frame by a <strong>layered sinusoidal noise</strong> function:
-  </p>
-  <pre><code>float livingInk(vec2 fragCoord, float amp) {
-    float t  = iTime * 1.8;
-    float nx = sin(fragCoord.x * 0.07 + t * 0.9) * 0.5
-             + sin(fragCoord.x * 0.13 - t * 1.3) * 0.3;
-    float ny = sin(fragCoord.y * 0.07 + t * 1.1) * 0.5
-             + sin(fragCoord.y * 0.11 - t * 0.7) * 0.3;
-    return (nx + ny) * amp;
-}</code></pre>
-  <p>
-    This makes outlines subtly thicken and thin as they "breathe," giving the impression of a line
-    drawn by hand that moves slightly over time. The amplitude is tuned per preset: high for Ink
-    Sketch (heavy wobble), low for Classic Anime (barely perceptible drift).
-  </p>
-
+  
   <h3>Halftone Shadow Stippling</h3>
   <p>
     In shadow regions (where diffuse falls below a per-preset threshold), a procedural pattern
@@ -620,6 +585,10 @@ float e1 = computeEdgeRaw(fragCoord, ro, rd, hitT, jitter1);</code></pre>
     Minimal pipeline test: a ground plane and a single sphere at the origin. Used throughout
     development to verify shading changes in isolation before testing on complex geometry.
   </p>
+  <div class="img-placeholder" style="border:none;">
+    <div class="img-label">Scene 001 - Testing Scene</div>
+    <img src="images/Scene_001.png" alt="Scene 001" style="width:100%;max-width:640px;display:block;margin:auto;">
+  </div>
 
   <h4>Scene 002 — Campanile</h4>
   <p>
@@ -631,10 +600,9 @@ float e1 = computeEdgeRaw(fragCoord, ro, rd, hitT, jitter1);</code></pre>
     on the horizon, a flat bay-water plane, and clock face discs on each shaft face.
   </p>
 
-  <div class="img-placeholder">
+  <div class="img-placeholder" style="border:none;">
     <div class="img-label">Scene 002 — Campanile overview</div>
-    <div class="img-desc">Wide shot of the full Campanile scene showing tower, trees, hills, and bay in Classic Anime mode. Show as much of the scene as possible.</div>
-    <div class="img-dim">Suggested: 1600 × 900 px</div>
+    <img src="images/Scene_002.png" alt="Scene 002 — Campanile overview" style="width:100%;max-width:900px;display:block;margin:auto;">
   </div>
 
   <h4>Scene 003 — Snowman</h4>
@@ -647,12 +615,12 @@ float e1 = computeEdgeRaw(fragCoord, ro, rd, hitT, jitter1);</code></pre>
 
   <div class="img-grid-2">
     <div class="img-placeholder">
-      <div class="img-label">Scene 003 — Snowman, Classic Anime</div>
-      <div class="img-desc">Snowman scene in Classic Anime preset showing cel bands and outlines.</div>
+      <div class="img-label">Scene 003 — Classic Anime</div>
+      <img src="images/Scene_003_Classic.png" alt="Scene 003 — Snowman, Classic Anime" style="width:100%;max-width:400px;display:block;margin:auto;">
     </div>
     <div class="img-placeholder">
-      <div class="img-label">Scene 003 — Snowman, Comic Book</div>
-      <div class="img-desc">Same angle in Comic Book preset showing halftone dots in shadow regions.</div>
+      <div class="img-label">Scene 003 — Comic Book</div>
+      <img src="images/Scene_003_comic.png" alt="Scene 003 — Snowman, Comic Book" style="width:100%;max-width:400px;display:block;margin:auto;">
     </div>
   </div>
 
@@ -699,100 +667,82 @@ float e1 = computeEdgeRaw(fragCoord, ro, rd, hitT, jitter1);</code></pre>
   </p>
 
   <h3>Style Preset Gallery</h3>
+  <h3>Campanile</h3>
 
-  <div class="preset-grid">
+
+  <div class="preset-grid" style="text-align: center;">
     <div class="preset-card">
       <div class="preset-img">
-        <div class="img-label">Screenshot needed</div>
-        <div>Classic Anime — Campanile scene<br>4-band cel, thin outlines, subtle halftone</div>
+        <img src="images/R1.png" alt="Classic Anime — Campanile scene" style="width:100%; max-width:400px; display:block; margin:auto;">
       </div>
       <div class="preset-body">
-        <h4>Classic Anime</h4>
-        <p>4 cel bands, Blinn-Phong specular glint, thin living-ink outlines, subtle halftone dots in shadow.</p>
-      </div>
-    </div>
-    <div class="preset-card">
-      <div class="preset-img">
-        <div class="img-label">Screenshot needed</div>
-        <div>Comic Book — Campanile scene<br>3-band cel, bold outlines, heavy halftone</div>
-      </div>
-      <div class="preset-body">
-        <h4>Comic Book</h4>
-        <p>3 cel bands, strong ambient fill, bold outlines, heavy halftone dot grid saturating shadow regions.</p>
+        <h4 style="text-align: center;">Classic Anime</h4>
       </div>
     </div>
     <div class="preset-card">
       <div class="preset-img">
-        <div class="img-label">Screenshot needed</div>
-        <div>Ink Sketch — Campanile scene<br>Warm paper, color wash, crosshatch hatching</div>
+        <img src="images/R2.png" alt="Comic Book — Campanile scene" style="width:100%; max-width:400px; display:block; margin:auto;">
       </div>
       <div class="preset-body">
-        <h4>Ink Sketch</h4>
-        <p>Warm toned-paper background, faint color wash, 45°/135° crosshatch in shadows, high-amplitude ink wobble.</p>
+        <h4 style="text-align: center;">Comic Book</h4>
       </div>
     </div>
     <div class="preset-card">
       <div class="preset-img">
-        <div class="img-label">Screenshot needed</div>
-        <div>Flat Cel — Campanile scene<br>2-band, no halftone, colored outlines</div>
+        <img src="images/R3.png" alt="Ink Sketch — Campanile scene" style="width:100%; max-width:400px; display:block; margin:auto;">
       </div>
       <div class="preset-body">
-        <h4>Flat Cel</h4>
-        <p>2 hard bands, no halftone, no specular, deep indigo outlines. Clean graphic-design aesthetic.</p>
+        <h4 style="text-align: center;">Ink Sketch</h4>
+      </div>
+    </div>
+    <div class="preset-card">
+      <div class="preset-img">
+        <img src="images/R4.png" alt="Flat Cel — Campanile scene" style="width:100%; max-width:400px; display:block; margin:auto;">
+      </div>
+      <div class="preset-body">
+        <h4 style="text-align: center;">Flat Cel</h4>
       </div>
     </div>
   </div>
 
-  <div class="img-placeholder">
-    <div class="img-label">Pencil Sketch preset</div>
-    <div class="img-desc">Pencil Sketch mode on the Campanile scene — showing grayscale smooth shading with rough jittered stroke edges. Pick a close-up angle that makes the stroke roughness visible.</div>
-    <div class="img-dim">Suggested: 1600 × 900 px</div>
-  </div>
+  <h3>Snowman</h3>
 
-  <h3>Style Comparison — Same Frame</h3>
-  <div class="img-placeholder">
-    <div class="img-label">4-up style comparison</div>
-    <div class="img-desc">A 2×2 grid showing the exact same camera angle in Classic Anime, Comic Book, Ink Sketch, and Flat Cel — cropped to a square for comparison. Best if taken on the Campanile scene showing the tower and a tree.</div>
-    <div class="img-dim">Suggested: four 800 × 800 px crops assembled into one image, or individual files</div>
-  </div>
 
-  <h3>Scene Gallery</h3>
-
-  <div class="img-grid-2">
-    <div class="img-placeholder">
-      <div class="img-label">Scene 002 — close-up belfry</div>
-      <div class="img-desc">Close-up of the belfry arched windows in Classic Anime mode, showing the arched cutouts and crease edge detection working on curved geometry.</div>
+  <div class="preset-grid" style="text-align: center;">
+    <div class="preset-card">
+      <div class="preset-img">
+        <img src="images/R6.png" alt="Classic Anime — Campanile scene" style="width:100%; max-width:400px; display:block; margin:auto;">
+      </div>
+      <div class="preset-body">
+        <h4 style="text-align: center;">Classic Anime</h4>
+      </div>
     </div>
-    <div class="img-placeholder">
-      <div class="img-label">Scene 002 — auto-orbit angle</div>
-      <div class="img-desc">The Campanile from a slightly oblique auto-orbit angle showing the bay, hills, and bridge towers in the background. Comic Book preset.</div>
+    <div class="preset-card">
+      <div class="preset-img">
+        <img src="images/R7.png" alt="Comic Book — Campanile scene" style="width:100%; max-width:400px; display:block; margin:auto;">
+      </div>
+      <div class="preset-body">
+        <h4 style="text-align: center;">Comic Book</h4>
+      </div>
+    </div>
+    <div class="preset-card">
+      <div class="preset-img">
+        <img src="images/R8.png" alt="Ink Sketch — Campanile scene" style="width:100%; max-width:400px; display:block; margin:auto;">
+      </div>
+      <div class="preset-body">
+        <h4 style="text-align: center;">Ink Sketch</h4>
+      </div>
+    </div>
+    <div class="preset-card">
+      <div class="preset-img">
+        <img src="images/R9.png" alt="Flat Cel — Campanile scene" style="width:100%; max-width:400px; display:block; margin:auto;">
+      </div>
+      <div class="preset-body">
+        <h4 style="text-align: center;">Flat Cel</h4>
+      </div>
     </div>
   </div>
 
-  <div class="img-grid-2">
-    <div class="img-placeholder">
-      <div class="img-label">Scene 001 — sphere test</div>
-      <div class="img-desc">Scene 001 (ground plane + sphere) in Classic Anime mode — the simplest scene. Shows the halftone dots on the shadow side of the sphere.</div>
-    </div>
-    <div class="img-placeholder">
-      <div class="img-label">Scene 003 — snowman close-up</div>
-      <div class="img-desc">Scene 003 snowman in Flat Cel mode showing the hat, scarf, coal eyes, and carrot nose with colored outlines.</div>
-    </div>
-  </div>
-
-  <h3>Animation</h3>
-  <p>
-    The living-ink outline animation and pencil stroke jitter are best seen in motion. The final
-    video (linked in the header) demonstrates all five presets on the Campanile scene with the
-    camera orbiting. The auto-orbit mode (Space bar) provides a slow continuous rotation at
-    0.04 rad/sec suitable for passive demonstration.
-  </p>
-
-  <div class="img-placeholder">
-    <div class="img-label">Video embed or animated GIF</div>
-    <div class="img-desc">If embedding a video: the final 1–2 min project video. If using a GIF: a 5–10 second loop showing the style preset switching (click Classic Anime → Comic Book → Ink Sketch → Flat Cel → Pencil Sketch) on the Campanile scene. Keep it under 10 MB.</div>
-    <div class="img-dim">GIF: ~900 × 500 px at 15 fps. Or use an &lt;iframe&gt; for the YouTube/Drive embed.</div>
-  </div>
 
   <div class="divider"></div>
 
@@ -842,17 +792,17 @@ float e1 = computeEdgeRaw(fragCoord, ro, rd, hitT, jitter1);</code></pre>
       <tr>
         <td><strong>Rudraksh Awasthi</strong></td>
         <td>
-          Repository setup and project architecture. All three scene SDF files: scene_001 (sphere + ground), scene_002 (Campanile — tapered shaft, belfry with arched windows, roof cap, spire, trees, hills, bay, bridge), scene_003 (snowman with hat, scarf, eyes, nose, arms). Browser harness (<code>index.html</code>): WebGL setup, shader concatenation, hot-reload, scene switcher UI, style preset buttons, camera uniform feed. <code>update-scenes.sh</code> tooling.
-        </td>
-      </tr>
-      <tr>
-        <td><strong>Shanta Joshi</strong></td>
-        <td>
-          <code>shading.glsl</code>: cel quantization, Blinn-Phong specular, halftone dot grid and crosshatch patterns, living-ink wobble animation, all five StyleParams presets, Pencil Sketch mode with jittered edge sampling, background sky shader. Edge detection system: <code>computeEdgeRaw</code>, silhouette gating, depth normalization, normal divergence.
+          Repository setup and project architecture. All three scene SDF files. Browser harness (<code>index.html</code>): WebGL setup, shader concatenation, hot-reload, scene switcher UI, style preset buttons, camera uniform feed. <code>update-scenes.sh</code> tooling.
         </td>
       </tr>
       <tr>
         <td><strong>Ahan Singhal</strong></td>
+        <td>
+          <code>shading.glsl</code>: cel quantization, Blinn-Phong specular, halftone dot grid and crosshatch patterns, all five StyleParams presets, Pencil Sketch mode with jittered edge sampling, background sky shader. Edge detection system: <code>computeEdgeRaw</code>, silhouette gating, depth normalization, normal divergence.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Shanta Joshi</strong></td>
         <td>
           <code>camera.glsl</code>: spherical-coordinate orbit camera, look-at basis construction, screen UV normalization, barrel distortion lens warp, <code>march()</code> raymarcher with configurable parameters, tetrahedron normal estimator, step-based ambient occlusion, soft shadow raymarcher, debug visualization utilities (step heatmap, normal visualization, depth visualization).
         </td>
