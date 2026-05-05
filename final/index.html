@@ -1,420 +1,866 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<script>
-		(function(){var s=localStorage.getItem('theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='dark'||((!s)&&d))document.documentElement.classList.add('dark');})();
-	</script>
-	<script>
-		MathJax = {
-			tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[', '\\]'], ['$$', '$$']] },
-			svg: { fontCache: 'global' }
-		};
-	</script>
-	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Final Project — CS184/284A Spring 2025</title>
-	<style>
-		*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <script>
+    (function(){var s=localStorage.getItem('theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='dark'||((!s)&&d))document.documentElement.classList.add('dark');})();
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CartoonForge &mdash; Final Report</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-		:root {
-			--bg: #f9f9f8;
-			--surface: #ffffff;
-			--text: #1a1a1a;
-			--text-muted: #6b6b6b;
-			--text-faint: #9b9b9b;
-			--accent: #2563eb;
-			--accent-light: rgba(37,99,235,0.07);
-			--border: #e5e5e3;
-			--border-strong: #d0d0ce;
-			--code-bg: #f3f3f1;
-			--code-color: #c62a2a;
-			--radius: 8px;
-			--radius-lg: 12px;
-			--btn-bg: #ebebea;
-			--btn-hover: #dededc;
-			--row-alt: #fafaf9;
-		}
+    :root {
+      --bg: #f9f9f8;
+      --surface: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #6b6b6b;
+      --text-faint: #9b9b9b;
+      --accent: #2563eb;
+      --accent-light: rgba(37,99,235,0.07);
+      --border: #e5e5e3;
+      --border-strong: #d0d0ce;
+      --code-bg: #f3f3f1;
+      --code-color: #c62a2a;
+      --radius: 8px;
+      --radius-lg: 12px;
+      --btn-bg: #ebebea;
+      --btn-hover: #dededc;
+      --row-alt: #fafaf9;
+    }
 
-		html.dark {
-			--bg: #1e1e1e;
-			--surface: #2d2d2d;
-			--text: #ececec;
-			--text-muted: #999999;
-			--text-faint: #666666;
-			--accent: #5b9cf6;
-			--accent-light: rgba(91,156,246,0.1);
-			--border: #3d3d3d;
-			--border-strong: #4d4d4d;
-			--code-bg: #252525;
-			--code-color: #f28b82;
-			--btn-bg: #3a3a3a;
-			--btn-hover: #444444;
-			--row-alt: #333333;
-		}
+    html.dark {
+      --bg: #1e1e1e;
+      --surface: #2d2d2d;
+      --text: #ececec;
+      --text-muted: #999999;
+      --text-faint: #666666;
+      --accent: #5b9cf6;
+      --accent-light: rgba(91,156,246,0.1);
+      --border: #3d3d3d;
+      --border-strong: #4d4d4d;
+      --code-bg: #252525;
+      --code-color: #f28b82;
+      --btn-bg: #3a3a3a;
+      --btn-hover: #444444;
+      --row-alt: #333333;
+    }
 
-		/* ── Theme toggle button ── */
-		#theme-toggle {
-			position: fixed;
-			top: 18px;
-			right: 20px;
-			z-index: 100;
-			display: flex;
-			align-items: center;
-			gap: 6px;
-			padding: 7px 12px;
-			background: var(--btn-bg);
-			border: none;
-			border-radius: 100px;
-			cursor: pointer;
-			font-family: inherit;
-			font-size: 12px;
-			font-weight: 500;
-			color: var(--text-muted);
-			transition: background 0.15s, color 0.15s;
-		}
-		#theme-toggle:hover {
-			background: var(--btn-hover);
-			color: var(--text);
-		}
-		#theme-toggle svg {
-			width: 14px;
-			height: 14px;
-			flex-shrink: 0;
-		}
-		.icon-sun  { display: none; }
-		.icon-moon { display: block; }
-		html.dark .icon-sun  { display: block; }
-		html.dark .icon-moon { display: none; }
+    #theme-toggle {
+      position: fixed;
+      top: 18px; right: 20px;
+      z-index: 100;
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 12px;
+      background: var(--btn-bg);
+      border: none; border-radius: 100px;
+      cursor: pointer;
+      font-family: inherit; font-size: 12px; font-weight: 500;
+      color: var(--text-muted);
+      transition: background 0.15s, color 0.15s;
+    }
+    #theme-toggle:hover { background: var(--btn-hover); color: var(--text); }
+    #theme-toggle svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .icon-sun  { display: none; }
+    .icon-moon { display: block; }
+    html.dark .icon-sun  { display: block; }
+    html.dark .icon-moon { display: none; }
 
-		html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; }
 
-		body {
-			font-family: 'Inter', system-ui, sans-serif;
-			background: var(--bg);
-			color: var(--text);
-			font-size: 15px;
-			line-height: 1.7;
-			-webkit-font-smoothing: antialiased;
-		}
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
 
-		/* ── Layout ── */
-		.page {
-			max-width: 800px;
-			margin: 0 auto;
-			padding: 80px 40px 120px;
-		}
+    .page {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 80px 40px 140px;
+    }
 
-		/* ── Header ── */
-		.site-header {
-			margin-bottom: 72px;
-			padding-bottom: 40px;
-			border-bottom: 1px solid var(--border);
-		}
+    /* Header */
+    .site-header {
+      margin-bottom: 64px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .site-header .label {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .site-header h1 {
+      font-size: 32px; font-weight: 600;
+      letter-spacing: -0.028em; line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .site-header .subtitle {
+      font-size: 15px; color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .header-links { display: flex; flex-direction: column; gap: 6px; margin-top: 20px; }
+    .header-links a { color: var(--accent); text-decoration: none; font-size: 13px; }
+    .header-links a:hover { text-decoration: underline; }
+    .header-links .link-label { font-size: 13px; color: var(--text-muted); }
 
-		.site-header .label {
-			font-size: 11px;
-			font-weight: 500;
-			letter-spacing: 0.1em;
-			text-transform: uppercase;
-			color: var(--text-muted);
-			margin-bottom: 14px;
-		}
+    /* TOC */
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      margin-bottom: 64px;
+    }
+    .toc-title {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 14px;
+    }
+    .toc ol { list-style: none; counter-reset: toc; display: flex; flex-direction: column; gap: 7px; padding-left: 0; }
+    .toc li { counter-increment: toc; }
+    .toc a {
+      font-size: 14px; color: var(--text);
+      text-decoration: none;
+      display: flex; gap: 10px; align-items: baseline;
+    }
+    .toc a::before {
+      content: counter(toc, decimal-leading-zero);
+      font-size: 11px; font-weight: 500;
+      color: var(--text-faint); flex-shrink: 0;
+    }
+    .toc a:hover { color: var(--accent); }
 
-		.site-header h1 {
-			font-size: 30px;
-			font-weight: 600;
-			letter-spacing: -0.025em;
-			line-height: 1.2;
-			margin-bottom: 10px;
-		}
+    /* Section labels */
+    .section-tag {
+      display: inline-flex; align-items: center;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); background: var(--accent-light);
+      padding: 4px 10px; border-radius: 100px;
+      margin-bottom: 12px;
+    }
 
-		.author {
-			font-size: 14px;
-			color: var(--text-muted);
-			margin-bottom: 20px;
-		}
+    .divider { height: 1px; background: var(--border); margin: 64px 0; }
 
-		.header-links {
-			display: flex;
-			gap: 20px;
-			flex-wrap: wrap;
-		}
+    /* Typography */
+    h2 {
+      font-size: 23px; font-weight: 600;
+      letter-spacing: -0.02em; line-height: 1.3;
+      margin-top: 0; margin-bottom: 18px;
+      scroll-margin-top: 32px;
+    }
+    h3 {
+      font-size: 16px; font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-top: 44px; margin-bottom: 12px;
+    }
+    h4 {
+      font-size: 14px; font-weight: 600;
+      margin-top: 28px; margin-bottom: 8px;
+    }
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    ul, ol { padding-left: 22px; margin-bottom: 14px; }
+    li { margin-bottom: 7px; }
+    li:last-child { margin-bottom: 0; }
 
-		.header-link-label {
-			font-size: 13px;
-			color: var(--text-muted);
-		}
+    code {
+      font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+      font-size: 12.5px;
+      background: var(--code-bg);
+      padding: 2px 6px; border-radius: 4px;
+      color: var(--code-color);
+    }
 
-		.header-links a {
-			color: var(--accent);
-			text-decoration: none;
-		}
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
 
-		.header-links a:hover { text-decoration: underline; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
 
-		/* ── TOC ── */
-		.toc {
-			background: var(--surface);
-			border: 1px solid var(--border);
-			border-radius: var(--radius-lg);
-			padding: 24px 28px;
-			margin-bottom: 64px;
-		}
+    /* Image placeholders */
+    .img-placeholder {
+      width: 100%;
+      background: var(--surface);
+      border: 2px dashed var(--border-strong);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      text-align: center;
+      margin: 24px 0;
+      color: var(--text-muted);
+    }
+    .img-placeholder .img-label {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 8px;
+    }
+    .img-placeholder .img-desc {
+      font-size: 13px; line-height: 1.5;
+      max-width: 500px; margin: 0 auto;
+    }
+    .img-placeholder .img-dim {
+      font-size: 11px; color: var(--text-faint);
+      margin-top: 6px;
+    }
 
-		.toc-title {
-			font-size: 11px;
-			font-weight: 600;
-			letter-spacing: 0.1em;
-			text-transform: uppercase;
-			color: var(--text-muted);
-			margin-bottom: 14px;
-		}
+    /* 2-up image grid */
+    .img-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 24px 0;
+    }
+    .img-grid-2 .img-placeholder { margin: 0; }
 
-		.toc ol {
-			list-style: none;
-			counter-reset: toc;
-			display: flex;
-			flex-direction: column;
-			gap: 6px;
-		}
+    /* 4-up preset grid */
+    .img-grid-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 24px 0;
+    }
 
-		.toc li { counter-increment: toc; }
+    /* Pipeline diagram */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 28px 0;
+      overflow-x: auto;
+    }
+    .pipeline-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 12px; font-weight: 500;
+      text-align: center;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .pipeline-step .step-sub {
+      display: block;
+      font-size: 10px; font-weight: 400;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .pipeline-arrow {
+      color: var(--text-faint);
+      font-size: 18px;
+      padding: 0 6px;
+      flex-shrink: 0;
+    }
 
-		.toc a {
-			font-size: 14px;
-			color: var(--text);
-			text-decoration: none;
-			display: flex;
-			gap: 10px;
-			align-items: baseline;
-		}
+    /* Contribution table */
+    .contrib-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin: 24px 0;
+    }
+    .contrib-table th {
+      background: var(--row-alt);
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+      text-align: left; font-weight: 600;
+    }
+    .contrib-table td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      vertical-align: top;
+    }
+    .contrib-table tr:nth-child(even) td { background: var(--row-alt); }
 
-		.toc a::before {
-			content: counter(toc, decimal-leading-zero);
-			font-size: 11px;
-			font-weight: 500;
-			color: var(--text-faint);
-			flex-shrink: 0;
-			font-variant-numeric: tabular-nums;
-		}
+    /* Callout box */
+    .callout {
+      background: var(--accent-light);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 14px 18px;
+      margin: 20px 0;
+      font-size: 14px;
+    }
 
-		.toc a:hover { color: var(--accent); }
+    /* Style preset cards */
+    .preset-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 24px 0;
+    }
+    .preset-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .preset-card .preset-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: var(--code-bg);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+      gap: 6px;
+      color: var(--text-faint);
+      font-size: 11px;
+      text-align: center;
+      padding: 12px;
+    }
+    .preset-card .preset-img .img-label {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--accent);
+    }
+    .preset-card .preset-body {
+      padding: 12px 14px;
+    }
+    .preset-card h4 { margin: 0 0 4px; font-size: 13px; }
+    .preset-card p  { font-size: 12px; color: var(--text-muted); margin: 0; }
 
-		/* ── Sections ── */
-		.section {
-			margin-bottom: 80px;
-		}
-
-		.section-tag {
-			display: inline-flex;
-			align-items: center;
-			gap: 6px;
-			font-size: 11px;
-			font-weight: 600;
-			letter-spacing: 0.1em;
-			text-transform: uppercase;
-			color: var(--accent);
-			background: var(--accent-light);
-			padding: 4px 10px;
-			border-radius: 100px;
-			margin-bottom: 16px;
-		}
-
-		h2 {
-			font-size: 22px;
-			font-weight: 600;
-			letter-spacing: -0.02em;
-			line-height: 1.3;
-			margin-bottom: 20px;
-			color: var(--text);
-			scroll-margin-top: 32px;
-		}
-
-		h3 {
-			font-size: 16px;
-			font-weight: 600;
-			letter-spacing: -0.01em;
-			margin-top: 36px;
-			margin-bottom: 12px;
-			color: var(--text);
-		}
-
-		h4 {
-			font-size: 14px;
-			font-weight: 600;
-			margin-top: 28px;
-			margin-bottom: 10px;
-			color: var(--text);
-		}
-
-		p { margin-bottom: 14px; }
-		p:last-child { margin-bottom: 0; }
-
-		ul, ol {
-			padding-left: 20px;
-			margin-bottom: 14px;
-		}
-
-		li { margin-bottom: 6px; }
-		li:last-child { margin-bottom: 0; }
-
-		/* ── Images ── */
-		figure {
-			margin: 32px 0;
-		}
-
-		.fig-row {
-			display: grid;
-			gap: 12px;
-			margin: 32px 0;
-		}
-		.fig-row.cols-2 { grid-template-columns: repeat(2, 1fr); }
-		.fig-row.cols-3 { grid-template-columns: repeat(3, 1fr); }
-		.fig-row.cols-4 { grid-template-columns: repeat(4, 1fr); }
-
-		figure img, .fig-row img {
-			width: 100%;
-			border-radius: var(--radius);
-			border: 1px solid var(--border);
-			display: block;
-		}
-
-		figcaption {
-			font-size: 13px;
-			color: var(--text-muted);
-			margin-top: 8px;
-			line-height: 1.5;
-		}
-
-		.fig-row figcaption { text-align: center; }
-
-		/* ── Code ── */
-		code {
-			font-family: 'JetBrains Mono', 'Fira Code', monospace;
-			font-size: 13px;
-			background: var(--code-bg);
-			color: var(--code-color);
-			padding: 2px 6px;
-			border-radius: 4px;
-		}
-
-		pre {
-			background: var(--code-bg);
-			border: 1px solid var(--border);
-			border-radius: var(--radius);
-			padding: 20px 24px;
-			overflow-x: auto;
-			margin: 20px 0;
-		}
-
-		pre code {
-			background: none;
-			color: var(--text);
-			padding: 0;
-			font-size: 13px;
-		}
-
-		/* ── Tables ── */
-		.table-wrap { overflow-x: auto; margin: 24px 0; }
-
-		table {
-			width: 100%;
-			border-collapse: collapse;
-			font-size: 14px;
-		}
-
-		th {
-			font-weight: 600;
-			font-size: 12px;
-			letter-spacing: 0.05em;
-			text-transform: uppercase;
-			color: var(--text-muted);
-			padding: 10px 14px;
-			border-bottom: 2px solid var(--border-strong);
-			text-align: left;
-		}
-
-		td {
-			padding: 10px 14px;
-			border-bottom: 1px solid var(--border);
-		}
-
-		tr:last-child td { border-bottom: none; }
-		tr:nth-child(even) td { background: var(--row-alt); }
-
-		/* ── Callout ── */
-		.callout {
-			background: var(--accent-light);
-			border-left: 3px solid var(--accent);
-			border-radius: 0 var(--radius) var(--radius) 0;
-			padding: 16px 20px;
-			margin: 24px 0;
-			font-size: 14px;
-			color: var(--text);
-		}
-
-		@media (max-width: 600px) {
-			.page { padding: 48px 20px 80px; }
-			.fig-row.cols-3, .fig-row.cols-4 { grid-template-columns: repeat(2, 1fr); }
-			.fig-row.cols-2 { grid-template-columns: 1fr; }
-			h2 { font-size: 20px; }
-		}
-	</style>
+    @media (max-width: 620px) {
+      .page { padding: 48px 20px 80px; }
+      h2 { font-size: 19px; }
+      .site-header h1 { font-size: 24px; }
+      .img-grid-2, .img-grid-4, .preset-grid { grid-template-columns: 1fr; }
+      .pipeline { flex-wrap: wrap; }
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('theme-toggle').addEventListener('click', function() {
+        var isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
+    });
+  </script>
 </head>
 <body>
-	<button id="theme-toggle" aria-label="Toggle dark mode">
-		<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-		</svg>
-		<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-			<circle cx="12" cy="12" r="5"/>
-			<line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-			<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-			<line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-			<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-		</svg>
-	</button>
 
-	<div class="page">
-		<header class="site-header">
-			<p class="label">CS184/284A &nbsp;·&nbsp; Spring 2025 &nbsp;·&nbsp; UC Berkeley</p>
-			<h1>Final Project</h1>
-			<p class="author">Rudraksh Awasthi</p>
-		</header>
+<button id="theme-toggle" aria-label="Toggle dark mode">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"/>
+    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+  Dark mode
+</button>
 
-		<nav class="toc">
-			<p class="toc-title">Contents</p>
-			<ol>
-				<li><a href="#overview">Overview</a></li>
-				<li><a href="#section-1">Section 1</a></li>
-			</ol>
-		</nav>
+<div class="page">
 
-		<section class="section" id="overview">
-			<span class="section-tag">Overview</span>
-			<h2>Overview</h2>
-			<p>Write your project overview here.</p>
-		</section>
+  <!-- ── Header ── -->
+  <header class="site-header">
+    <p class="label">Ahan Singhal &nbsp;&middot;&nbsp; Shanta Joshi &nbsp;&middot;&nbsp; Rudraksh Awasthi &nbsp;&middot;&nbsp; CS184/284A &nbsp;&middot;&nbsp; Spring 2026</p>
+    <h1>CartoonForge: Real-Time Non-Photorealistic Rendering</h1>
+    <p class="subtitle">Raymarching, cel shading, procedural edge detection, and five switchable stylization presets — all in the browser, in a single GLSL fragment shader.</p>
+    <div class="header-links">
+      <span class="link-label">Repository: <a href="https://github.com/cal-cs184-student/cartoonforge">github.com/cal-cs184-student/cartoonforge</a></span>
+      <span class="link-label">Video: <a href="https://drive.google.com/drive/folders/1mwkda9ihOplw2DQoZfo_RRv_enVXhUUC?usp=sharing">drive.google.com/…/cartoonforge-video</a></span>
+      <span class="link-label">Slides: <a href="https://docs.google.com/presentation/d/1TMaoZek11454vSE2GWNuZ3jtEJH5n4yZHeMxiaJTtEM/edit?usp=sharing">docs.google.com/…/cartoonforge-slides</a></span>
+    </div>
+  </header>
 
-		<section class="section" id="section-1">
-			<span class="section-tag">Part 1</span>
-			<h2>Section 1</h2>
-			<p>Write your content here.</p>
-		</section>
-	</div>
+  <!-- ── TOC ── -->
+  <nav class="toc">
+    <p class="toc-title">Contents</p>
+    <ol>
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#technical">Technical Approach</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#references">References</a></li>
+      <li><a href="#contributions">Team Contributions</a></li>
+    </ol>
+  </nav>
 
-	<script>
-		(function() {
-			var saved = localStorage.getItem('theme');
-			var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			if (saved === 'dark' || (!saved && prefersDark)) {
-				document.documentElement.classList.add('dark');
-			}
-		})();
-		document.getElementById('theme-toggle').addEventListener('click', function() {
-			var isDark = document.documentElement.classList.toggle('dark');
-			localStorage.setItem('theme', isDark ? 'dark' : 'light');
-		});
-	</script>
+  <!-- ============================================================ -->
+  <div class="section-tag">Section 1</div>
+  <h2 id="abstract">Abstract</h2>
+  <!-- ============================================================ -->
+
+  <p>
+    CartoonForge is a real-time non-photorealistic renderer that runs entirely in the browser as a
+    single WebGL fragment shader. The entire scene — geometry, lighting, shading, and stylization —
+    is computed per-pixel using raymarching over Signed Distance Functions (SDFs). There are no meshes,
+    no rasterization pipeline, and no texture lookups: every visual element is procedural.
+  </p>
+  <p>
+    The renderer produces five distinct stylization modes — Classic Anime, Comic Book, Ink Sketch,
+    Flat Cel, and Pencil Sketch — all switchable at runtime without shader recompilation. It includes
+    a full orbit camera, multiple scenes, cel-quantized diffuse lighting, screen-space edge detection,
+    living-ink outline animation, halftone shadow stippling, and a hand-drawn pencil stroke effect
+    using spatially jittered edge samples.
+  </p>
+
+  <div class="img-placeholder">
+    <div class="img-label">Hero image</div>
+    <div class="img-desc">Full-screen screenshot of the Campanile scene (scene_002) in Classic Anime mode — best angle showing the tower, trees, and sky together. Landscape orientation.</div>
+    <div class="img-dim">Suggested: 1600 × 900 px</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Section 2</div>
+  <h2 id="technical">Technical Approach</h2>
+  <!-- ============================================================ -->
+
+  <h3>Starting Point</h3>
+  <p>
+    We started from scratch with no starter code. The initial commit was an empty repository. All
+    GLSL, the browser harness, and tooling were written during the project. We referenced Inigo
+    Quilez's SDF function library for primitive formulas (sphere, box, torus, cylinder) and his
+    articles on raymarching; the actual GLSL implementation, pipeline architecture, stylization
+    system, and all scenes are original work.
+  </p>
+
+  <h3>The Raymarching Pipeline</h3>
+  <p>
+    Raymarching (sphere tracing) works by firing one ray per pixel from the camera, then stepping
+    along the ray in increments equal to the minimum distance to any surface in the scene. When the
+    accumulated distance falls below a small epsilon, the ray has hit a surface. The scene is defined
+    by a single function <code>sceneSDF(vec3 p)</code> that returns a
+    <code>vec2(distance, materialID)</code> pair for any point in space.
+  </p>
+
+  <div class="pipeline">
+    <div class="pipeline-step">fragCoord<span class="step-sub">pixel</span></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step">getCamera()<span class="step-sub">camera.glsl</span></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step">sceneSDF()<span class="step-sub">active scene</span></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step">sceneNormal()<span class="step-sub">finite diff.</span></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step">shade()<span class="step-sub">shading.glsl</span></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step">fragColor<span class="step-sub">output</span></div>
+  </div>
+
+  <p>
+    The pipeline is split across four GLSL files concatenated at load time by the browser harness.
+    Swapping scenes requires replacing only the active scene file; camera and shading modules are
+    scene-independent.
+  </p>
+
+  <h4>SDF Primitives and CSG</h4>
+  <p>
+    All geometry is built from a shared library of SDF primitives in <code>reference/sdf_primitives.glsl</code>:
+    sphere, box, plane, cylinder, and torus. Scenes compose objects using CSG operators:
+    <code>opUnion</code>, <code>opSmoothUnion</code> (smooth blending), <code>opSubtract</code>,
+    and <code>opIntersect</code>. The Campanile scene (scene_002) uses a tapered box for the shaft,
+    round-box cutouts approximating arched belfry windows, a pyramid-approximated copper cap, and
+    groups of sphere CSG for the Marin hills silhouette.
+  </p>
+
+  <h4>Surface Normals</h4>
+  <p>
+    Normals are computed via the <strong>tetrahedron method</strong> — four SDF evaluations at
+    tetrahedral offsets rather than the six required by central differences. This gives slightly
+    better accuracy and saves two SDF calls per pixel, which matters when <code>sceneSDF</code>
+    is expensive (Campanile evaluates ~30 SDF primitives per call).
+  </p>
+
+  <h4>Camera System</h4>
+  <p>
+    The camera is a spherical-coordinate orbit: azimuth, elevation, and radius are maintained by
+    the JavaScript harness and passed to the shader as <code>uniform vec3 iCamera</code> each frame.
+    The shader converts to Cartesian coordinates and builds a look-at basis matrix.
+    Mouse drag, trackpad pinch, WASD/arrow keys, and Q/E zoom are all handled in JS so the shader
+    itself is stateless. A barrel-distortion lens warp (optional) adds a slight cartoon fisheye feel.
+  </p>
+
+  <div class="img-placeholder">
+    <div class="img-label">Camera controls diagram</div>
+    <div class="img-desc">Annotated screenshot or diagram showing the orbit controls — azimuth/elevation axes, zoom direction. Can be a simple labeled sphere with arrows.</div>
+    <div class="img-dim">Suggested: 800 × 500 px</div>
+  </div>
+
+  <h3>Cel Shading</h3>
+  <p>
+    Standard Lambertian diffuse is computed as usual, then <strong>quantized into discrete bands</strong>
+    using <code>floor(rawDiffuse * N) / N</code>. The number of bands <code>N</code> varies by preset
+    (2 for Flat Cel, 4 for Classic Anime, 6 for Ink Sketch). A quantized Blinn-Phong specular
+    highlight is added: the specular term is hard-thresholded at 0.5 rather than left smooth,
+    producing the characteristic anime "glint" dot.
+  </p>
+  <p>
+    The ambient and band-to-color remapping was a key design decision: rather than mapping band 0
+    directly to black, we remap so that band 0 = <code>ambient × baseColor</code> and the top band
+    = <code>baseColor</code>. This keeps shadow regions colored rather than pure black, which looks
+    better for all NPR styles.
+  </p>
+
+  <div class="img-grid-2">
+    <div class="img-placeholder">
+      <div class="img-label">Cel shading — smooth</div>
+      <div class="img-desc">The same object rendered with raw smooth Lambertian diffuse (no quantization) for comparison.</div>
+    </div>
+    <div class="img-placeholder">
+      <div class="img-label">Cel shading — quantized</div>
+      <div class="img-desc">The same object with 4-band cel quantization active — visible discrete shading bands.</div>
+    </div>
+  </div>
+
+  <h3>Screen-Space Edge Detection</h3>
+  <p>
+    Edges are detected by firing two additional neighbor rays (one pixel to the right, one pixel up)
+    from each fragment and combining three signals:
+  </p>
+  <ul>
+    <li><strong>Silhouette edges</strong> — neighbor ray misses the scene entirely while the center ray hits. Gated by surface facing angle to suppress false positives on grazing-angle ground planes.</li>
+    <li><strong>Depth discontinuity</strong> — large relative difference between neighbor and center hit distances (<code>|tR − t| / t</code>). Normalizing by hit distance ensures far-away geometry doesn't dominate.</li>
+    <li><strong>Normal divergence</strong> — dot product between center and neighbor surface normals falls below 1, revealing creases on curved surfaces like the belfry arches.</li>
+  </ul>
+  <p>
+    A critical bug found during development: the neighbor raymarch was stopping at <code>t = 20</code>
+    units, but the hills and background objects in scene_002 are at <code>t = 30–80</code> units.
+    Every pixel seeing the hills returned a "neighbor miss" and fired the silhouette path — painting
+    the entire lower half of the screen black. The fix was raising the edge raymarch limit to
+    <code>t = 120</code>.
+  </p>
+
+  <div class="img-grid-2">
+    <div class="img-placeholder">
+      <div class="img-label">Edge detection — silhouette only</div>
+      <div class="img-desc">Visualization showing only the silhouette edges (depth-miss path) in white on black.</div>
+    </div>
+    <div class="img-placeholder">
+      <div class="img-label">Edge detection — full (silhouette + crease)</div>
+      <div class="img-desc">Combined edge map: silhouette + depth discontinuity + normal divergence. Shows creases on the belfry arches.</div>
+    </div>
+  </div>
+
+  <h3>Living-Ink Outline Animation</h3>
+  <p>
+    Rather than applying a hard threshold to the edge magnitude, the threshold is perturbed each
+    frame by a <strong>layered sinusoidal noise</strong> function:
+  </p>
+  <pre><code>float livingInk(vec2 fragCoord, float amp) {
+    float t  = iTime * 1.8;
+    float nx = sin(fragCoord.x * 0.07 + t * 0.9) * 0.5
+             + sin(fragCoord.x * 0.13 - t * 1.3) * 0.3;
+    float ny = sin(fragCoord.y * 0.07 + t * 1.1) * 0.5
+             + sin(fragCoord.y * 0.11 - t * 0.7) * 0.3;
+    return (nx + ny) * amp;
+}</code></pre>
+  <p>
+    This makes outlines subtly thicken and thin as they "breathe," giving the impression of a line
+    drawn by hand that moves slightly over time. The amplitude is tuned per preset: high for Ink
+    Sketch (heavy wobble), low for Classic Anime (barely perceptible drift).
+  </p>
+
+  <h3>Halftone Shadow Stippling</h3>
+  <p>
+    In shadow regions (where diffuse falls below a per-preset threshold), a procedural pattern
+    overlays the surface. The Comic Book preset uses a classic <strong>halftone dot grid</strong>:
+    dot radius scales with shadow depth so darker regions get denser, larger dots. The Ink Sketch
+    preset uses <strong>crosshatch lines</strong> at 45° and 135°, with line thickness varying by
+    shadow depth and the cross-hatch second layer appearing only in the deepest shadows.
+  </p>
+
+  <h3>Runtime Style Preset System</h3>
+  <p>
+    All five styles share a single compiled shader. A <code>uniform float iStylePreset</code> is
+    written by JavaScript each frame and read into a <code>StyleParams</code> struct at the top
+    of the shading function. Every downstream helper (<code>celShade</code>, <code>halftone</code>,
+    <code>computeEdgeRaw</code>) receives the struct as a parameter. Style switching is instantaneous
+    — no recompile, no flash.
+  </p>
+  <p>
+    This required replacing all compile-time <code>#define</code> constants with runtime struct
+    fields — a significant refactor from our original design which caused a 200–500 ms recompile
+    flash on every style switch.
+  </p>
+
+  <h3>Pencil Sketch Mode — Jittered Edge Sampling</h3>
+  <p>
+    The Pencil Sketch preset (added after the milestone) takes a different approach to edge rendering.
+    Instead of computing a single edge magnitude and applying a uniform threshold, it fires
+    <strong>three spatially jittered edge queries</strong>, each with a noise-driven pixel-space
+    offset applied to the neighbor ray directions:
+  </p>
+  <pre><code>vec2 jitter1 = vec2(pencilNoise(uv * 2.1 + t),
+                    pencilNoise(uv * 1.8 - t * 0.7)) * amp * 6.0;
+float e1 = computeEdgeRaw(fragCoord, ro, rd, hitT, jitter1);</code></pre>
+  <p>
+    Because each sample's neighbor rays point in slightly different directions, they land on
+    different sides of the edge boundary. Some samples detect an edge, others don't — producing
+    natural stroke breakup, varying width, and gaps that mimic the irregular pressure of a pencil.
+    The shading itself is smooth (non-quantized) grayscale diffuse, converting material colors
+    to perceptual luminance using the standard <code>(0.299, 0.587, 0.114)</code> weights.
+  </p>
+
+  <h3>Scenes</h3>
+
+  <h4>Scene 001 — Ground Plane + Sphere</h4>
+  <p>
+    Minimal pipeline test: a ground plane and a single sphere at the origin. Used throughout
+    development to verify shading changes in isolation before testing on complex geometry.
+  </p>
+
+  <h4>Scene 002 — Campanile</h4>
+  <p>
+    The primary showcase scene. The UC Berkeley Campanile is approximated using a tapered rectangular
+    shaft, a belfry block with four arched window cutouts (implemented as smooth-union round-box
+    subtractions), a pyramid-approximated copper roof cap, a thin cylindrical spire, and a base
+    pavilion. The scene also includes rows of trees (cylinder trunk + flattened sphere canopy),
+    two Golden Gate Bridge tower silhouettes in the bay, Marin hills as large overlapping spheres
+    on the horizon, a flat bay-water plane, and clock face discs on each shaft face.
+  </p>
+
+  <div class="img-placeholder">
+    <div class="img-label">Scene 002 — Campanile overview</div>
+    <div class="img-desc">Wide shot of the full Campanile scene showing tower, trees, hills, and bay in Classic Anime mode. Show as much of the scene as possible.</div>
+    <div class="img-dim">Suggested: 1600 × 900 px</div>
+  </div>
+
+  <h4>Scene 003 — Snowman</h4>
+  <p>
+    A stylized snowman composed of three stacked spheres (body segments), a top hat (cylinder +
+    box brim), coal eyes (small spheres), a carrot nose (cone approximated by a tapered cylinder),
+    a scarf (torus), and twig arms (rotated cylinders). The scene demonstrates multi-material
+    assignment and the shading system's ability to handle many distinct material IDs in one scene.
+  </p>
+
+  <div class="img-grid-2">
+    <div class="img-placeholder">
+      <div class="img-label">Scene 003 — Snowman, Classic Anime</div>
+      <div class="img-desc">Snowman scene in Classic Anime preset showing cel bands and outlines.</div>
+    </div>
+    <div class="img-placeholder">
+      <div class="img-label">Scene 003 — Snowman, Comic Book</div>
+      <div class="img-desc">Same angle in Comic Book preset showing halftone dots in shadow regions.</div>
+    </div>
+  </div>
+
+  <h3>Key Decisions and What We Learned</h3>
+  <ul>
+    <li>
+      <strong>WebGL 1.0 has no <code>#ifdef</code>.</strong> GLSL ES 1.00 (used by <code>getContext('webgl')</code>)
+      does not support <code>#ifndef</code>/<code>#ifdef</code> preprocessor guards. We had wrapped
+      <code>camera.glsl</code> in a guard to prevent double-inclusion — the compiler silently dropped
+      the entire file, leaving <code>iCamera</code> undeclared. Lesson: test with a minimal harness
+      before adding defensive constructs.
+    </li>
+    <li>
+      <strong>Edge detection raymarch range must match scene depth.</strong> Using a shorter max
+      distance for the neighbor rays than the main raymarch caused false silhouettes on all distant
+      geometry. The fix (matching limits) eliminated the solid-black lower half of scene_002.
+    </li>
+    <li>
+      <strong>Depth discontinuity must be normalized.</strong> An absolute depth difference
+      <code>|tR − t| * 0.6</code> produces enormous values on far-away grazing surfaces (ground
+      plane at t=40 with neighbor at t=45 → edge signal of 3.0). Dividing by <code>t</code>
+      makes the signal scale-invariant.
+    </li>
+    <li>
+      <strong>Jittering sample positions produces more convincing hand-drawn strokes than threshold
+      perturbation.</strong> Perturbing the threshold with noise only roughens the edge boundary;
+      jittering the sample point makes the stroke itself physically wander, skip, and vary in width
+      — much closer to a real pencil line.
+    </li>
+  </ul>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Section 3</div>
+  <h2 id="results">Results</h2>
+  <!-- ============================================================ -->
+
+  <p>
+    All five style presets render in real time (60 fps) in Chrome and Firefox on macOS with a
+    discrete GPU. The Campanile scene evaluates ~30 SDF primitives per main ray plus 2 additional
+    neighbor rays per pixel for edge detection, totaling ~90 SDF evaluations per pixel per frame
+    at full resolution.
+  </p>
+
+  <h3>Style Preset Gallery</h3>
+
+  <div class="preset-grid">
+    <div class="preset-card">
+      <div class="preset-img">
+        <div class="img-label">Screenshot needed</div>
+        <div>Classic Anime — Campanile scene<br>4-band cel, thin outlines, subtle halftone</div>
+      </div>
+      <div class="preset-body">
+        <h4>Classic Anime</h4>
+        <p>4 cel bands, Blinn-Phong specular glint, thin living-ink outlines, subtle halftone dots in shadow.</p>
+      </div>
+    </div>
+    <div class="preset-card">
+      <div class="preset-img">
+        <div class="img-label">Screenshot needed</div>
+        <div>Comic Book — Campanile scene<br>3-band cel, bold outlines, heavy halftone</div>
+      </div>
+      <div class="preset-body">
+        <h4>Comic Book</h4>
+        <p>3 cel bands, strong ambient fill, bold outlines, heavy halftone dot grid saturating shadow regions.</p>
+      </div>
+    </div>
+    <div class="preset-card">
+      <div class="preset-img">
+        <div class="img-label">Screenshot needed</div>
+        <div>Ink Sketch — Campanile scene<br>Warm paper, color wash, crosshatch hatching</div>
+      </div>
+      <div class="preset-body">
+        <h4>Ink Sketch</h4>
+        <p>Warm toned-paper background, faint color wash, 45°/135° crosshatch in shadows, high-amplitude ink wobble.</p>
+      </div>
+    </div>
+    <div class="preset-card">
+      <div class="preset-img">
+        <div class="img-label">Screenshot needed</div>
+        <div>Flat Cel — Campanile scene<br>2-band, no halftone, colored outlines</div>
+      </div>
+      <div class="preset-body">
+        <h4>Flat Cel</h4>
+        <p>2 hard bands, no halftone, no specular, deep indigo outlines. Clean graphic-design aesthetic.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="img-placeholder">
+    <div class="img-label">Pencil Sketch preset</div>
+    <div class="img-desc">Pencil Sketch mode on the Campanile scene — showing grayscale smooth shading with rough jittered stroke edges. Pick a close-up angle that makes the stroke roughness visible.</div>
+    <div class="img-dim">Suggested: 1600 × 900 px</div>
+  </div>
+
+  <h3>Style Comparison — Same Frame</h3>
+  <div class="img-placeholder">
+    <div class="img-label">4-up style comparison</div>
+    <div class="img-desc">A 2×2 grid showing the exact same camera angle in Classic Anime, Comic Book, Ink Sketch, and Flat Cel — cropped to a square for comparison. Best if taken on the Campanile scene showing the tower and a tree.</div>
+    <div class="img-dim">Suggested: four 800 × 800 px crops assembled into one image, or individual files</div>
+  </div>
+
+  <h3>Scene Gallery</h3>
+
+  <div class="img-grid-2">
+    <div class="img-placeholder">
+      <div class="img-label">Scene 002 — close-up belfry</div>
+      <div class="img-desc">Close-up of the belfry arched windows in Classic Anime mode, showing the arched cutouts and crease edge detection working on curved geometry.</div>
+    </div>
+    <div class="img-placeholder">
+      <div class="img-label">Scene 002 — auto-orbit angle</div>
+      <div class="img-desc">The Campanile from a slightly oblique auto-orbit angle showing the bay, hills, and bridge towers in the background. Comic Book preset.</div>
+    </div>
+  </div>
+
+  <div class="img-grid-2">
+    <div class="img-placeholder">
+      <div class="img-label">Scene 001 — sphere test</div>
+      <div class="img-desc">Scene 001 (ground plane + sphere) in Classic Anime mode — the simplest scene. Shows the halftone dots on the shadow side of the sphere.</div>
+    </div>
+    <div class="img-placeholder">
+      <div class="img-label">Scene 003 — snowman close-up</div>
+      <div class="img-desc">Scene 003 snowman in Flat Cel mode showing the hat, scarf, coal eyes, and carrot nose with colored outlines.</div>
+    </div>
+  </div>
+
+  <h3>Animation</h3>
+  <p>
+    The living-ink outline animation and pencil stroke jitter are best seen in motion. The final
+    video (linked in the header) demonstrates all five presets on the Campanile scene with the
+    camera orbiting. The auto-orbit mode (Space bar) provides a slow continuous rotation at
+    0.04 rad/sec suitable for passive demonstration.
+  </p>
+
+  <div class="img-placeholder">
+    <div class="img-label">Video embed or animated GIF</div>
+    <div class="img-desc">If embedding a video: the final 1–2 min project video. If using a GIF: a 5–10 second loop showing the style preset switching (click Classic Anime → Comic Book → Ink Sketch → Flat Cel → Pencil Sketch) on the Campanile scene. Keep it under 10 MB.</div>
+    <div class="img-dim">GIF: ~900 × 500 px at 15 fps. Or use an &lt;iframe&gt; for the YouTube/Drive embed.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Section 4</div>
+  <h2 id="references">References</h2>
+  <!-- ============================================================ -->
+
+  <ul>
+    <li>
+      Inigo Quilez, <em>Raymarching SDFs</em> — distance function formulas for sphere, box, cylinder, torus, and smooth union.
+      <a href="https://iquilezles.org/articles/distfunctions/">iquilezles.org/articles/distfunctions</a>
+    </li>
+    <li>
+      Inigo Quilez, <em>Painting a Landscape with Maths</em> — reference for sphere-tracing loop structure and normal estimation techniques.
+      <a href="https://iquilezles.org/articles/raymarchingdf/">iquilezles.org/articles/raymarchingdf</a>
+    </li>
+    <li>
+      Inigo Quilez, <em>ShaderToy: Raymarching Primitives</em> — the standalone ShaderToy shader included in our reference directory as a study reference (not used directly in our pipeline).
+    </li>
+    <li>
+      McGuire et al., <em>Stylized Rendering Techniques for Scalable Real-Time 3D Animation</em> — survey of NPR techniques including cel shading quantization strategies.
+    </li>
+    <li>
+      Lake, Adam et al., <em>Stylized Rendering Techniques for Scalable Real-Time 3D Animation</em> (NPAR 2000) — halftone and crosshatch stippling in screen space.
+    </li>
+    <li>
+      WebGL 1.0 specification / GLSL ES 1.00 — constraint reference for preprocessor directives and supported built-ins.
+    </li>
+  </ul>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================ -->
+  <div class="section-tag">Section 5</div>
+  <h2 id="contributions">Team Contributions</h2>
+  <!-- ============================================================ -->
+
+  <table class="contrib-table">
+    <thead>
+      <tr>
+        <th style="width:160px">Member</th>
+        <th>Contributions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Rudraksh Awasthi</strong></td>
+        <td>
+          Repository setup and project architecture. All three scene SDF files: scene_001 (sphere + ground), scene_002 (Campanile — tapered shaft, belfry with arched windows, roof cap, spire, trees, hills, bay, bridge), scene_003 (snowman with hat, scarf, eyes, nose, arms). Browser harness (<code>index.html</code>): WebGL setup, shader concatenation, hot-reload, scene switcher UI, style preset buttons, camera uniform feed. <code>update-scenes.sh</code> tooling.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Shanta Joshi</strong></td>
+        <td>
+          <code>shading.glsl</code>: cel quantization, Blinn-Phong specular, halftone dot grid and crosshatch patterns, living-ink wobble animation, all five StyleParams presets, Pencil Sketch mode with jittered edge sampling, background sky shader. Edge detection system: <code>computeEdgeRaw</code>, silhouette gating, depth normalization, normal divergence.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Ahan Singhal</strong></td>
+        <td>
+          <code>camera.glsl</code>: spherical-coordinate orbit camera, look-at basis construction, screen UV normalization, barrel distortion lens warp, <code>march()</code> raymarcher with configurable parameters, tetrahedron normal estimator, step-based ambient occlusion, soft shadow raymarcher, debug visualization utilities (step heatmap, normal visualization, depth visualization).
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div><!-- .page -->
+
 </body>
 </html>
